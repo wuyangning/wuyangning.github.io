@@ -1,0 +1,1369 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/y.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/y.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="robotics" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="摘要：讨论不同的刚体姿态表示方法。包括：欧拉角、四元数、李群李代数。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="姿态表示方法">
+<meta property="og:url" content="http://example.com/2022/10/29/y2022m11/%E5%A7%BF%E6%80%81%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="WuYangNing">
+<meta property="og:description" content="摘要：讨论不同的刚体姿态表示方法。包括：欧拉角、四元数、李群李代数。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-10-29T13:51:40.892Z">
+<meta property="article:modified_time" content="2023-01-27T11:22:16.273Z">
+<meta property="article:author" content="WuYangNing">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>姿态表示方法 | WuYangNing</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">WuYangNing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-all-posts">
+          <a href="/default-index/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            All posts
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/29/y2022m11/%E5%A7%BF%E6%80%81%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/icon.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WuYangNing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">姿态表示方法</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-10-29T21:51:40+08:00">
+                2022-10-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>摘要：讨论不同的刚体姿态表示方法。包括：欧拉角、四元数、李群李代数。</strong></p>
+<span id="more"></span>
+<p>定义惯性坐标系为$O_i$，刚体坐标系为$O_b$</p>
+<h1><span id="1-旋转矩阵">1 旋转矩阵</span></h1><p>&emsp;惯性坐标系下的刚体姿态可以使用旋转矩阵表示：</p>
+<script type="math/tex; mode=display">
+R=[\boldsymbol{r}_1,\boldsymbol{r}_2,\boldsymbol{r}_3]^{\mathrm{T}} \tag{1}</script><p>其中：$\boldsymbol{r}_1,\boldsymbol{r}_2,\boldsymbol{r}_3$分别表示刚体坐标系x,y,z方向上的单位向量在惯性坐标系中的表示。</p>
+<p>&emsp;旋转矩阵为单位矩阵。满足性质：</p>
+<script type="math/tex; mode=display">
+\mathrm{det}(R)=I,~R^{\mathrm{T}}R=I \tag{2}</script><h2><span id="11-绕xyz轴的旋转">1.1 绕x,y,z轴的旋转</span></h2><script type="math/tex; mode=display">
+Rot_x(\theta)=\begin{bmatrix}
+  1& 0 &0 \\
+  0& \mathrm{cos}\theta &-\mathrm{sin}\theta \\
+  0&  \mathrm{sin}\theta&\mathrm{cos}\theta
+\end{bmatrix}\\
+~\\
+Rot_y(\theta)=\begin{bmatrix}
+  \mathrm{cos}\theta& 0 &\mathrm{sin}\theta \\
+  0& 1&0\\
+  -\mathrm{sin}\theta&  0&\mathrm{cos}\theta
+\end{bmatrix}\\
+~\\
+Rot_z(\theta)=\begin{bmatrix}
+  \mathrm{cos}\theta& -\mathrm{sin}\theta&0 \\
+  \mathrm{sin}\theta& \mathrm{cos}\theta &0 \\
+  0&  0&1
+\end{bmatrix} \tag{3}</script><p>其中旋转方向可使用右手定则确定。</p>
+<h2><span id="12-旋转矩阵的导数">1.2 旋转矩阵的导数</span></h2><p>&emsp;记刚体旋转的角速度在惯性坐标系和刚体坐标系下的表示分别为$\boldsymbol{\omega}_i$和$\boldsymbol{\omega}_b$。则旋转矩阵的导数可以表示为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&\dot{R}=\mathrm{sk}(\boldsymbol{\omega}_i)R \tag{4} \\ 
+&\dot{R}=R\mathrm{sk}(\boldsymbol{\omega}_b) \tag{5} 
+\end{align}</script><p>其中$\mathrm{sk}(\boldsymbol{\omega})=\begin{bmatrix}0 &amp; -\omega_z &amp;\omega_y \\  \omega_z&amp;0  &amp;-\omega_x \\<br> -\omega_y&amp;  \omega_x&amp; 0\end{bmatrix}$为向量$\boldsymbol{\omega}=[\omega_x,\omega_y,\omega_z]^{\mathrm{T}}$对应的反对称矩阵。公式(4)和(5)可以利用如下性质互相转化：</p>
+<script type="math/tex; mode=display">
+R\mathrm{sk}(\boldsymbol{\omega})R^{\mathrm{T}}=\mathrm{sk}(R\boldsymbol{\omega}) \tag{6}</script><h1><span id="2-欧拉角">2 欧拉角</span></h1><p>&emsp;记依次绕自身坐标系z-y-x轴旋转的欧拉角为$\boldsymbol{\Phi}=[\phi,\theta,\psi]^\mathrm{T}$，欧拉角对应的旋转矩阵可以表示为：</p>
+<script type="math/tex; mode=display">
+R=Rot_{z}(\psi)Rot_{y}(\theta)Rot_{x}(\phi)=\begin{bmatrix}
+  c\psi c\theta& c\psi s\theta s\phi-s\psi c\phi&c\psi s\theta c\phi+s\psi s\phi \\
+  s\psi c\theta&s\phi s\theta s\phi+c\psi c\phi   &s\psi s\theta c\phi-c\psi s\phi \\
+  -s\theta&  c\theta s\phi&c\theta c\phi
+\end{bmatrix} \tag{7}</script><h2><span id="21-由旋转矩阵计算欧拉角">2.1 由旋转矩阵计算欧拉角</span></h2><p>&emsp;记旋转矩阵为$R=\begin{bmatrix}<br>  r_{11}&amp;r_{12}&amp;r_{13} \\<br>  r_{21}&amp;r_{22}&amp;r_{23} \\<br>  r_{31}&amp;r_{32}&amp;r_{33}<br>\end{bmatrix}$，旋转矩阵对应的欧拉角可由以下方式计算：</p>
+<ul>
+<li>如果$r_{31}\neq\pm1$<ul>
+<li>$\theta_1=-\mathrm{asin}(r_{31})$</li>
+<li>$\theta_2=\pi-\theta_1$</li>
+<li>$\phi_1=\mathrm{atan2}(\frac{r_{32}}{c\theta_1},\frac{r_{33}}{c\theta_1})$</li>
+<li>$\phi_2=\mathrm{atan2}(\frac{r_{32}}{c\theta_2},\frac{r_{33}}{c\theta_2})$</li>
+<li>$\psi_1=\mathrm{atan2}(\frac{r_{21}}{c\theta_1},\frac{r_{11}}{c\theta_1})$</li>
+<li>$\psi_2=\mathrm{atan2}(\frac{r_{21}}{c\theta_2},\frac{r_{11}}{c\theta_2})$</li>
+</ul>
+</li>
+<li>如果$r_{31}=\pm1$<ul>
+<li>万向节死锁，$\psi$可为任意值</li>
+<li>如果$r_{31}=1$<ul>
+<li>$\theta=\pi/2$</li>
+<li>$\phi=\psi+\mathrm{atan2}(r_{12},r_{13})$</li>
+</ul>
+</li>
+<li>如果$r_{31}=-1$  <ul>
+<li>$\theta=-\pi/2$</li>
+<li>$\phi=-\psi+\mathrm{atan2}(-r_{12},-r_{13})$</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2><span id="22-欧拉角的导数">2.2 欧拉角的导数</span></h2><p>&emsp;记$\boldsymbol{\Phi}=[\phi,\theta,\psi]^{\mathrm{T}}$为绕机体坐标轴按z-y-x顺序旋转的roll，pitch和yaw角，$\boldsymbol{\Phi}$的导数可表示为：</p>
+<script type="math/tex; mode=display">
+\dot{\boldsymbol{\Phi}}=\begin{bmatrix}
+1 & \mathrm{sin}\phi \mathrm{tan}\theta&\mathrm{cos}\phi\mathrm{tan}\theta\\
+0 & \mathrm{cos}\phi & -\mathrm{sin}\phi\\
+0 & \mathrm{sin}\phi \mathrm{sec}\theta  & \mathrm{cos}\phi \mathrm{sec}\theta
+\end{bmatrix}\boldsymbol{\omega}_b \tag{8}</script><p>同时：</p>
+<script type="math/tex; mode=display">\boldsymbol{\omega}_b=\begin{bmatrix}
+1 & 0&-\mathrm{sin}\theta\\
+0 & \mathrm{cos}\phi & \mathrm{sin}\phi\mathrm{cos}\theta\\
+0 & -\mathrm{sin}\phi & \mathrm{cos}\phi \mathrm{cos}\theta
+\end{bmatrix}\dot{\boldsymbol{\Phi}} \tag{9}</script><p>可以看出上述结论仅在$\theta\neq\pm\pi/2$的条件下成立。</p>
+<p>&emsp;推导</p>
+<script type="math/tex; mode=display">\begin{aligned}
+&\dot{R}=\dot{R}_{\psi}R_{\theta}R_{\phi}+R_{\psi}\dot{R}_{\theta}R_{\phi}+R_{\psi}R_{\theta}\dot{R}_{\phi}=R_{\psi}R_{\theta}R_{\phi}\mathrm{sk}(\boldsymbol{\omega_b})\\
+&R_{\phi}^{\mathrm{T}}R_{\theta}^{\mathrm{T}}R_{\psi}^{\mathrm{T}}\dot{R}_{\psi}R_{\theta}R_{\phi}+R_{\phi}^{\mathrm{T}}R_{\theta}^{\mathrm{T}}\dot{R}_{\theta}R_{\phi}+R_{\phi}^{\mathrm{T}}\dot{R}_{\phi}=\mathrm{sk}(\boldsymbol{\omega_b})\\
+&R_{\phi}^{\mathrm{T}}R_{\theta}^{\mathrm{T}}\mathrm{sk}([0,0,\dot{\psi}]^{\mathrm{T}})R_{\theta}R_{\phi}+R_{\phi}^{\mathrm{T}}\mathrm{sk}([0,\dot{\theta},0]^{\mathrm{T}})R_{\theta}+\mathrm{sk}([\dot{\phi},0,0]^{\mathrm{T}})=\mathrm{sk}(\boldsymbol{\omega_b})\\
+&\mathrm{sk}(R_{\phi}^{\mathrm{T}}R_{\theta}^{\mathrm{T}}[0,0,\dot{\psi}]^{\mathrm{T}})+\mathrm{sk}(R_{\phi}^{\mathrm{T}}[0,\dot{\theta},0]^{\mathrm{T}})+\mathrm{sk}([\dot{\phi},0,0]^{\mathrm{T}})=\mathrm{sk}(\boldsymbol{\omega_b})\\
+&\boldsymbol{\omega_b}=R_{\phi}^{\mathrm{T}}R_{\theta}^{\mathrm{T}}[0,0,\dot{\psi}]^{\mathrm{T}}+R_{\phi}^{\mathrm{T}}[0,\dot{\theta},0]^{\mathrm{T}}+[\dot{\phi},0,0]^{\mathrm{T}}
+\end{aligned}</script><h1><span id="3-四元数">3 四元数</span></h1><p>&emsp;单位四元数可用于旋转的表示：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{q}=[s,\boldsymbol{v}]^{\mathrm{T}} =[cos\frac{\theta}{2},\boldsymbol{n}sin\frac{\theta}{2}]^{\mathrm{T}} \tag{10}</script><p>其中$\theta\in\mathbb{R}$和$\boldsymbol{n}\in\mathbb{R}^3$分别为旋转角和单位旋转轴，$||\boldsymbol{q}||=1$。</p>
+<h2><span id="31-四元数的运算">3.1 四元数的运算</span></h2><p>&emsp;定义两个四元数$\boldsymbol{q}_1=[s_1,\boldsymbol{v}_1]^{\mathrm{T}}$和$\boldsymbol{q}_2=[s_2,\boldsymbol{v}_2]^{\mathrm{T}}$。</p>
+<p><strong>加法运算</strong></p>
+<script type="math/tex; mode=display">
+\boldsymbol{q}_1\pm\boldsymbol{q}_2=[s_1\pm s_2,\boldsymbol{v}_1\pm\boldsymbol{v}_2]^{\mathrm{T}} \tag{11}</script><p><strong>积运算</strong></p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{q}_1\otimes\boldsymbol{q}_2=
+\begin{bmatrix}
+ s_1&-\boldsymbol{v}^{\mathrm{T}}_1 \\ 
+ \boldsymbol{v}_1&s_1I+\mathrm{sk}(\boldsymbol{v}_1) 
+\end{bmatrix}
+\boldsymbol{q}_2=Q\boldsymbol{q}_2\\
+&\boldsymbol{q}_1\otimes\boldsymbol{q}_2=
+\begin{bmatrix}
+ s_2&-\boldsymbol{v}^{\mathrm{T}}_2 \\ 
+ \boldsymbol{v}_2&s_2I-\mathrm{sk}(\boldsymbol{v}_2) 
+\end{bmatrix}
+\boldsymbol{q}_1=\bar{Q}\boldsymbol{q}_1
+\end{aligned}\tag{12}</script><p>或</p>
+<script type="math/tex; mode=display">
+\boldsymbol{q}_1\otimes\boldsymbol{q}_2=[s_1s_2-\boldsymbol{v}_1^{\mathrm{T}}\boldsymbol{v}_2,s_1\boldsymbol{v}_2+s_2\boldsymbol{v}_1+\boldsymbol{v}_1\times\boldsymbol{v}_2]^{\mathrm{T}} \tag{13}</script><p><strong>共轭与逆</strong><br>&emsp;$\boldsymbol{q}_1$的共轭为：</p>
+<script type="math/tex; mode=display">
+\bar{\boldsymbol{q}}_1=[s_1,-\boldsymbol{v}_1]^{\mathrm{T}} \tag{14}</script><p>&emsp;$\boldsymbol{q}_1$的逆为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{q}_1^{-1}=\frac{\bar{\boldsymbol{q}}_1}{||\boldsymbol{q}_1||}=\bar{\boldsymbol{q}}_1 \tag{15}</script><p>&emsp;共轭四元数满足关系：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&Q^{\mathrm{T}}(\boldsymbol{q})=Q(\bar{\boldsymbol{q}})\\
+&\bar{Q}^{\mathrm{T}}(\boldsymbol{q})=\bar{Q}(\bar{\boldsymbol{q}}) 
+\end{aligned}\tag{16}</script><h2><span id="32-四元数旋转变换">3.2 四元数旋转变换</span></h2><p>&emsp;定义矢量$\boldsymbol{p}=[0,x,y,z]^{\mathrm{T}}$，四元数$\boldsymbol{q}=[s,\boldsymbol{v}]^{\mathrm{T}}$。经四元数$\boldsymbol{q}$变换得到的矢量$\boldsymbol{p}’$可表示为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{p}'=\boldsymbol{q}\otimes\boldsymbol{p}\otimes\boldsymbol{q}^* \tag{17}</script><p>写成矩阵形式：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{p}'=
+\begin{bmatrix}
+ s&-\boldsymbol{v}^{\mathrm{T}} \\ 
+ \boldsymbol{v}&sI+\mathrm{sk}(\boldsymbol{v}) 
+\end{bmatrix}\begin{bmatrix}
+ s&\boldsymbol{v}^{\mathrm{T}} \\ 
+ -\boldsymbol{v}&sI+\mathrm{sk}(\boldsymbol{v}) 
+\end{bmatrix}\boldsymbol{p} \tag{18}</script><h2><span id="33-四元数-旋转矩阵和欧拉角">3.3 四元数、旋转矩阵和欧拉角</span></h2><p><strong>四元数对应的旋转矩阵</strong><br>&emsp;由(18)可以得到四元数对应的旋转矩阵为</p>
+<script type="math/tex; mode=display">
+R=\boldsymbol{v}\boldsymbol{v}^{\mathrm{T}}+(sI+\mathrm{sk}(\boldsymbol{v}))(sI+\mathrm{sk}(\boldsymbol{v}))\tag{19}</script><p>展开可写作：</p>
+<script type="math/tex; mode=display">
+R=\begin{bmatrix}
+ 1-2v_y^2-2v_z^2&2v_xv_y-2sv_z&2v_xv_z+2sv_y \\ 
+ 2v_xv_y+2sv_z& 1-2v_x^2-2v_z^2&2v_yv_z-2sv_x\\
+ 2v_xv_z-2sv_y&2v_yv_z+2sv_x&1-2v_x^2-2v_y^2
+\end{bmatrix} \tag{20}</script><p><strong>欧拉角对应的四元数</strong><br>&emsp;$\boldsymbol{\Phi}=[\phi,\theta,\psi]^{\mathrm{T}}$绕机体轴按z-y-x顺序的欧拉角对应的四元数可表示为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\boldsymbol{q}=&\begin{bmatrix}
+\mathrm{cos}(\psi/2)\\ 
+ 0\\
+ 0\\
+ \mathrm{sin}(\psi/2)
+\end{bmatrix}\otimes\begin{bmatrix}
+\mathrm{cos}(\theta/2)\\ 
+ 0\\
+ \mathrm{sin}(\theta/2)\\
+ 0
+\end{bmatrix}\otimes\begin{bmatrix}
+\mathrm{cos}(\phi/2)\\ 
+\mathrm{sin}(\phi/2)\\
+0\\
+0
+\end{bmatrix}\\
+=&\begin{bmatrix}
+c(\phi/2)c(\theta/2)c(\psi/2)+s(\phi/2)s(\theta/2)s(\psi/2)\\ 
+s(\phi/2)c(\theta/2)c(\psi/2)-c(\phi/2)s(\theta/2)s(\psi/2)\\
+c(\phi/2)s(\theta/2)c(\psi/2)+s(\phi/2)c(\theta/2)s(\psi/2)\\
+c(\phi/2)c(\theta/2)s(\psi/2)-s(\phi/2)s(\theta/2)c(\psi/2)
+\end{bmatrix}
+\end{aligned} \tag{21}</script><p><strong>旋转矩阵对应的四元数</strong><br>&emsp;记旋转矩阵为$R=\begin{bmatrix}<br>  r_{11}&amp;r_{12}&amp;r_{13} \\<br>  r_{21}&amp;r_{22}&amp;r_{23} \\<br>  r_{31}&amp;r_{32}&amp;r_{33}<br>\end{bmatrix}$，旋转矩阵对应的四元数$\boldsymbol{q}=[s,v_x,v_y,v_z]^{\mathrm{T}}$可由以下方式计算：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&s=\frac{1}{2}\sqrt{1+r_{11}^2+r_{22}^2+r_{33}^2}\\
+&v_x=\frac{1}{2}\sqrt{1+r_{11}^2-r_{22}^2-r_{33}^2}\\
+&v_y=\frac{1}{2}\sqrt{1-r_{11}^2+r_{22}^2-r_{33}^2}\\
+&v_z=\frac{1}{2}\sqrt{1-r_{11}^2-r_{22}^2+r_{33}^2}\\
+\end{aligned}\tag{22}</script><h2><span id="34-四元数的导数">3.4 四元数的导数</span></h2><p>&emsp;定义四元数$\boldsymbol{q}=[s,\boldsymbol{v}]^{\mathrm{T}}$，$\boldsymbol{q}$的导数可以表示为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\dot{\boldsymbol{q}}=\frac{1}{2}[0,\boldsymbol{\omega}_i]^{\mathrm{T}}\otimes\boldsymbol{q}=\frac{1}{2}\begin{bmatrix}
+ s&-\boldsymbol{v}^{\mathrm{T}} \\ 
+ \boldsymbol{v}&sI-\mathrm{sk}(\boldsymbol{v}) 
+\end{bmatrix}\begin{bmatrix}0\\\boldsymbol{\omega}_i\end{bmatrix}\\
+&\dot{\boldsymbol{q}}=\frac{1}{2}\boldsymbol{q}\otimes[0,\boldsymbol{\omega}_b]^{\mathrm{T}}=\frac{1}{2}\begin{bmatrix}
+ s&-\boldsymbol{v}^{\mathrm{T}} \\ 
+ \boldsymbol{v}&sI+\mathrm{sk}(\boldsymbol{v}) 
+\end{bmatrix}\begin{bmatrix}0\\\boldsymbol{\omega}_b\end{bmatrix}
+\end{aligned} \tag{23}</script><h1><span id="4-李群李代数">4 李群李代数</span></h1><h2><span id="41-so3和se3群">4.1 $SO(3)$和$SE(3)$群</span></h2><p>&emsp;群是一个集合$A$和一种运算$\cdot$构成的代数结构。集合$A$和运算$\cdot$需要满足以下条件：</p>
+<ul>
+<li>封闭性：$\forall a_1,a_2\in A, \: a_1\cdot a_2\in A$</li>
+<li>结合律：$\forall a_1,a_2,a_3\in A, \:\: (a_1\cdot a_2)\cdot a_3=a_1\cdot  (a_2\cdot a_3)$</li>
+<li>有单位元（幺元）：$\exists a_0\in A,\:s.t. \:\forall a\in A,\:a_0\cdot a=a\cdot a_0=a$</li>
+<li>有逆元：$\forall a\in A,\: \exists a^{-1}\in A,\: a\cdot a^{-1}=a_0$</li>
+</ul>
+<p>可以看出，旋转矩阵和矩阵乘法是一个李群，记作特殊正交群$SO(3)$：</p>
+<script type="math/tex; mode=display">
+SO(3)=\{R\in\mathbb{R}^{3\times3}|RR^{\mathrm{T}}=I,\mathrm{det}(R)=1\} \tag{24}</script><p>其中$I\in\mathbb{R}^3$为三维单位矩阵。同样齐次变换矩阵和矩阵乘法也是一个李群，记作特殊欧式群$SE(3)$：</p>
+<script type="math/tex; mode=display">
+SE(3)=\{T=\begin{bmatrix}R&\boldsymbol{t}\\\boldsymbol{0}&1\end{bmatrix}\in\mathbb{R}^{4\times4}|R\in SO(3),\boldsymbol{t}\in\mathbb{R}^3\} \tag{25}</script><h2><span id="42-mathfrakso3和mathfrakse3李代数">4.2 $\mathfrak{so}(3)$和$\mathfrak{se}(3)$李代数</span></h2><p>&emsp;每个李群都有对应的李代数，李代数描述了李群的局部性质，因此也称为群的切空间。李代数由一个集合$\mathbb{V}$，一个数域$\mathbb{F}$和一个二元运算$[,]$组成的代数结构。集合$\mathbb{V}$，数域$\mathbb{F}$和二元运算$[,]$需要满足以下条件：</p>
+<ul>
+<li>封闭性：$\forall X,Y\in\mathbb{V},~[X,Y]\in\mathbb{V}$</li>
+<li>双线性：$\forall X,Y,Z\in\mathbb{V},~a,b\in\mathbb{F}$，有$[aX+bY,Z]=a[X,Z]+b[Y,Z]$和$[Z,aX+bY]=a[Z,X]+b[Z,Y]$</li>
+<li>自反性：$\forall X\in\mathbb{V},~[X,Z]=0$</li>
+<li>雅可比等价性：$\forall X,Y,Z\in\mathbb{V}$，有$[X,[Y,Z]]+[Z,[X,Y]]+[Y,[Z,X]]=0$</li>
+</ul>
+<p>其中二元运算$[,]$也称为李括号。可以看出，向量是一个李代数，其对应的李括号为向量积运算。向量对应的反对称矩阵也是一个李代数，反对称矩阵$\Phi_1$和$\Phi_2$的李括号为运算：$[\Phi_1,\Phi_2]=\Phi_1\Phi_2-\Phi_2\Phi_1$。向量和对应反对称矩阵的李括号运算是等价的。</p>
+<p>&emsp;$SO(3)$群对应的李代数为一个$\mathbb{R}^3$向量或该向量对应的$\mathbb{R}^{3\times3}$反对称矩阵，记作：</p>
+<script type="math/tex; mode=display">
+\mathfrak{so}(3)=\{ \boldsymbol{\phi}\in\mathbb{R}^3,\Phi=\boldsymbol{\phi}^{\wedge}\in\mathbb{R}^{3\times3} \} \tag{26}</script><p>其中，在$\mathfrak{so}(3)$的定义中，$\wedge$为向量到反对称矩阵的映射，记作$\mathbb{R}^3\rightarrow\mathbb{R}^{3\times3}~\rm{in}~\mathfrak{so}(3)$；$\vee$为反对称矩阵到向量的映射，记作$\mathbb{R^{3\times3}}\rightarrow\mathbb{R}^3~\rm{in}~\mathfrak{so}(3)$。对应的李括号为$[\boldsymbol{\phi}_1, \boldsymbol{\phi}_2]=\boldsymbol{\phi}_1\times\boldsymbol{\phi}_2$或$[\boldsymbol{\phi}_1,\boldsymbol{\phi}_2]=(\Phi_1\Phi_2-\Phi_2\Phi_1)^{\vee}$</p>
+<p>&emsp;$SE(3)$群对应的李代数为一个$\mathbb{R}^6$向量或该向量对应的$\mathbb{R}^{4\times4}$矩阵，记作：</p>
+<script type="math/tex; mode=display">
+\mathfrak{se}(3)=\{ \boldsymbol{\xi}=\begin{bmatrix}\boldsymbol{\rho}\\ \boldsymbol{\phi}\end{bmatrix}\in\mathbb{R}^6,\boldsymbol{\rho}\in\mathbb{R}^3,\boldsymbol{\phi}\in\mathfrak{so}(3),\boldsymbol{\xi}^{\wedge}=\begin{bmatrix}\boldsymbol{\phi}^{\wedge}&\boldsymbol{\rho}\\\boldsymbol{0}&0\end{bmatrix}\in\mathbb{R}^{4\times4} \} \tag{27}</script><p>其中，在$\mathfrak{se}(3)$的定义中，$\wedge$为$\mathbb{R}^6\rightarrow\mathbb{R}^{4\times4}~\rm{in}~\mathfrak{se}(3)$的映射；$\vee$为$\mathbb{R^{4\times4}}\rightarrow\mathbb{R}^6~\rm{in}~\mathfrak{se}(3)$。对应的李括号为$[\boldsymbol{\xi}_1, \boldsymbol{\xi}_2]=(\boldsymbol{\xi}^{\wedge}_1\boldsymbol{\xi}^{\wedge}_2-\boldsymbol{\xi}^{\wedge}_2\boldsymbol{\xi}^{\wedge}_1)^{\vee}$。</p>
+<h2><span id="43-指数映射和对数映射">4.3 指数映射和对数映射</span></h2><p>&emsp;李群和李代数之间可以通过指数映射和对数映射互相转化：</p>
+<p><strong>指数映射</strong>：</p>
+<ol>
+<li>$\mathfrak{so}(3)\rightarrow SO(3)$:<script type="math/tex; mode=display">
+R=\mathrm{exp}(\boldsymbol{\phi}^{\wedge}) \tag{28}</script>记：$\boldsymbol{\phi}=\theta\boldsymbol{a}$，$\boldsymbol{a}\in\mathbb{R}^3$为单位向量，利用泰勒展开，指数映射可以表示为:<script type="math/tex; mode=display">
+\mathrm{exp}(\theta\boldsymbol{a}^{\wedge})=\mathrm{cos}\theta I+(1-\mathrm{cos}\theta)\boldsymbol{a}\boldsymbol{a}^{\mathrm{T}}+\mathrm{sin}\theta\boldsymbol{a}^{\wedge} \tag{29}</script></li>
+</ol>
+<ol>
+<li>$\mathfrak{se}(3)\rightarrow SE(3)$：<script type="math/tex; mode=display">
+\begin{aligned}
+&T=\begin{bmatrix}\mathrm{exp}(\boldsymbol{\phi}^{\wedge})&J\boldsymbol{\rho}\\\boldsymbol{0}&1\end{bmatrix}\\
+&J=\frac{\mathrm{sin}\theta}{\theta}I+(1-\frac{\mathrm{sin}\theta}{\theta})\boldsymbol{a}\boldsymbol{a}^{\mathrm{T}}+\frac{1-\mathrm{cos}\theta}{\theta}\boldsymbol{a}^{\wedge}
+\end{aligned}\tag{30}</script></li>
+</ol>
+<p><strong>对数映射</strong>：</p>
+<ol>
+<li>$SO(3)\rightarrow \mathfrak{so}(3)$:<script type="math/tex; mode=display">
+\boldsymbol{\phi}=\mathrm{ln}(R)^{\vee} \tag{31}</script>记$\boldsymbol{a}=[a_x,a_y,a_z]^{\mathrm{T}}$，对公式(29)展开：<script type="math/tex; mode=display">
+R=\begin{bmatrix}
+a_x^2+(1-a_x^2)\mathrm{cos}\theta&a_xa_y(1-\mathrm{cos}\theta)-a_z\mathrm{sin}\theta&a_xa_z(1-\mathrm{cos}\theta)+a_y\mathrm{sin}\theta \\ 
+a_xa_y(1-\mathrm{cos}\theta)+a_z\mathrm{sin}\theta&  a_y^2+(1-a_y^2)\mathrm{cos}\theta&a_ya_z(1-\mathrm{cos}\theta)-a_x\mathrm{sin}\theta\\
+a_xa_z(1-\mathrm{cos}\theta)-a_y\mathrm{sin}\theta&a_ya_z(1-\mathrm{cos}\theta)+a_x\mathrm{sin}\theta& a_z^2+(1-a_z^2)\mathrm{cos}\theta
+\end{bmatrix} \tag{32}</script>可得：<script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{\phi}=\theta\boldsymbol{a}\\
+&\theta=\mathrm{acos}(\frac{\mathrm{tr}(R)-1}{2})\\
+&\boldsymbol{a}=\frac{1}{2\mathrm{sin}\theta}(R-R^{\mathrm{T}})^{\vee}=\frac{(R-R^{\mathrm{T}})^{\vee}}{||(R-R^{\mathrm{T}})^{\vee}||} \\
+&\mathrm{ln}(R)=\frac{\theta}{2\mathrm{sin}\theta}(R-R^{\mathrm{T}})
+\end{aligned}\tag{33}</script></li>
+</ol>
+<ol>
+<li>$SE(3)\rightarrow\mathfrak{se}(3)$:<script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{\xi}=\begin{bmatrix}\boldsymbol{\rho}\\ \boldsymbol{\phi}\end{bmatrix}\\
+&\boldsymbol{\phi}=\mathrm{ln}(R)^{\vee}\\
+&\boldsymbol{\rho}=J^{-1}\boldsymbol{t}
+\end{aligned}\tag{34}</script></li>
+</ol>
+<p>&emsp;可以看出李代数将$SO(3)$群映射为了一个$\mathbb{R}^3$向量，把$SE(3)$群映射成了一个$\mathbb{R}^6$向量。</p>
+<h1><span id="5-总结和比较">5 总结和比较</span></h1><h3><span id="51-旋转表示的目标">5.1 旋转表示的目标</span></h3><ol>
+<li><p>把旋转表示成一个$\mathbb{R}^3$向量。在运动学和动力学中的角速度$\boldsymbol{\omega}$和力矩$\boldsymbol{\tau}$是$\mathbb{R}^3$向量。因此将旋转表示成$\mathbb{R}^3$向量有助于控制算法和优化算法的设计。</p>
+</li>
+<li><p>能够使用简单的运算连续且平滑地表示旋转的误差和插值。$SO(3)$不是一个线性空间，当把旋转表示成$\mathbb{R}^3$后，$\mathbb{R}^3$上的线性差值和增量在$SO(3)$空间中并不是两个姿态之间的最短路径。如果直接使$\mathbb{R}^3$的线性差值和增量来表示旋转误差或插值，会导致旋转不平滑，甚至奇异问题的出现。因此，在把旋转表示成$\mathbb{R}^3$向量后，还需要能找到一种关于这个向量的简单运算，使得其能够被用于$SO(3)$空间中旋转误差的表示。</p>
+</li>
+</ol>
+<h3><span id="51-旋转表示法的物理含义">5.1 旋转表示法的物理含义</span></h3><p><strong>旋转的“最短路径”</strong><br>&emsp;欧拉旋转定理表明，在三维空间里，一个刚体在做一个旋转的时候，刚体内部至少有一点固定不动。因此刚体的三维旋转可以表示为绕着一个经过旋转点的固定轴的旋转。对于一个刚体，如果能够找到两个姿态之间的旋转轴和旋转角，让一个姿态绕着旋转旋转对应角度到达另一个姿态，则认为这个旋转是两个姿态之间的“最短路径”。在$SO(3)$空间中需要使用这一“最短旋转路径”来表示旋转误差和插值，以保证姿态控制和插值的连续平滑。</p>
+<p><strong>欧拉角</strong><br>&emsp;欧拉角将旋转拆分成了3个简单的顺序旋转，能够帮助我们快速建立坐标系之间的旋转关系。对于一些机构，例如满足piper准则的机械臂球型手腕，其关节空间反映的就是末端坐标系的欧拉角空间，这在机构控制中会带来一些便捷。但欧拉角表示存在奇异，也就是常说的万向节死锁问题，这对大范围的姿态旋转表示是不利的，此外欧拉角也无法通过简单的运算来平滑地表示旋转误差和旋转插值。</p>
+<p><strong>四元数</strong><br>&emsp;对于四元数$\boldsymbol{q}=[s,\boldsymbol{v}]^{\mathrm{T}}=[\mathrm{cos}\frac{\theta}{2},\mathrm{sin}\frac{\theta}{2}\boldsymbol{a}]^{\mathrm{T}}$。$\boldsymbol{a}$为轴角法中的旋转轴，$\theta$为绕旋转轴旋转的角度。四元数能够使用乘法运算来平滑地表示两个姿态的旋转误差，同时将这一误差映射到单位四维超球面$\mathbb{S}^3\subset\mathbb{R}^4$空间。<br>&emsp;根据轴角法的定义，对于相同的旋转轴，$\theta$和$\theta+2\pi$表示的是同一个旋转，将这两个角带如四元数表示中，会得到$\boldsymbol{q}=-\boldsymbol{q}$的结果，这就是四元数的双倍覆盖问题。也就是说值相同，符号相反的两个四元数表示的是同一个旋转，因此四元数对旋转的表示是不唯一的。</p>
+<p><strong>李代数</strong><br>&emsp;对于李代数$\boldsymbol{\phi}=\theta\boldsymbol{a}$，$\boldsymbol{a}$为轴角法中的旋转轴，$\theta$为绕旋转轴旋转的角度。$SO(3)$空间的旋转误差通过李代数映射被成一个$\mathbb{R^3}$向量。</p>
+<h2><span id="53-旋转表示法的比较">5.3 旋转表示法的比较</span></h2><div class="table-container">
+<table>
+<thead>
+<tr>
+<th style="text-align:center">姿态描述</th>
+<th style="text-align:center">所属空间</th>
+<th style="text-align:center">全局性</th>
+<th style="text-align:center">唯一性</th>
+<th style="text-align:center">旋转误差</th>
+<th style="text-align:center">误差范数在$SO(3)$空间中是否为最短路径</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">旋转矩阵</td>
+<td style="text-align:center">$SO(3)\subset\mathbb{R}^{3\times3}$</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">$R_d^\mathrm{T}R\rightarrow I$</td>
+<td style="text-align:center">是</td>
+</tr>
+<tr>
+<td style="text-align:center">欧拉角</td>
+<td style="text-align:center">$\mathbb{R}^3$</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">$\boldsymbol{\Phi}-\boldsymbol{\Phi}_d\rightarrow \boldsymbol{0}$</td>
+<td style="text-align:center">否</td>
+</tr>
+<tr>
+<td style="text-align:center">四元数</td>
+<td style="text-align:center">$\mathbb{S}^3\subset\mathbb{R}^4$</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">$\bar{\boldsymbol{q}}_d\otimes\boldsymbol{q}\rightarrow[1,0,0,0]^\mathrm{T}$</td>
+<td style="text-align:center">是</td>
+</tr>
+<tr>
+<td style="text-align:center">轴角法</td>
+<td style="text-align:center">$\mathbb{R}^4$</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">否</td>
+<td style="text-align:center">$\theta-\theta_d\rightarrow 0$</td>
+<td style="text-align:center">是</td>
+</tr>
+<tr>
+<td style="text-align:center">李代数</td>
+<td style="text-align:center">$\mathfrak{so}_3\subset\mathbb{R}^3$</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">是</td>
+<td style="text-align:center">$\mathrm{ln}(R_d^\mathrm{T}R)^{\vee}\rightarrow \boldsymbol{0}$</td>
+<td style="text-align:center">是</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>参考文献</strong></p>
+<blockquote>
+<p>[1] Lynch K M, Park F C. Modern robotics[M]. Cambridge University Press, 2017.<br>[2] Chaturvedi N A, Sanyal A K, McClamroch N H. Rigid-body attitude control[J]. IEEE control systems magazine, 2011, 31(3): 30-51.<br>[3] <a target="_blank" rel="noopener" href="https://github.com/Krasjet/quaternion">https://github.com/Krasjet/quaternion</a><br>[4] 高翔，张涛，”视觉SLAM十四讲”[M]. 电子工业出版社，2017.</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2022/11/03/y2022m11/%E5%A7%BF%E6%80%81%E6%8E%A7%E5%88%B6/" rel="prev" title="姿态控制">
+                姿态控制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/icon.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <br>
+            <div style="width:120px;text-align:left;margin-left: 50px;margin-right: 50px;">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/wuyangning" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://space.bilibili.com/347683789" target="_blank" title="BiliBili">
+                      
+                        <i class="fa fa-fw fa-globe"></i>BiliBili</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.youtube.com/channel/UCc2FKnVd4zd1lU_P9QGXRmA" target="_blank" title="YouTube">
+                      
+                        <i class="fa fa-fw fa-youtube"></i>YouTube</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.thingiverse.com/yang_gt/designs" target="_blank" title="Thingiverse">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Thingiverse</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">1 旋转矩阵</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">1.1 绕x,y,z轴的旋转</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">1.2 旋转矩阵的导数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">2 欧拉角</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.1 由旋转矩阵计算欧拉角</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.2 欧拉角的导数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">3 四元数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">3.1 四元数的运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">3.2 四元数旋转变换</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">3.3 四元数、旋转矩阵和欧拉角</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">3.4 四元数的导数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">4 李群李代数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">4.1 $SO(3)$和$SE(3)$群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">4.2 $\mathfrak{so}(3)$和$\mathfrak{se}(3)$李代数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">4.3 指数映射和对数映射</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">5 总结和比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-text">5.1 旋转表示的目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link"><span class="nav-text">5.1 旋转表示法的物理含义</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">5.3 旋转表示法的比较</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">WuYangNing</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

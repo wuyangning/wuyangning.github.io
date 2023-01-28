@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/y.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/y.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="robotics" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="摘要：讨论由多组倾转或固定旋翼驱动的单一刚体无人机的姿态&#x2F;位置轨迹跟踪控制。包含的无人机类型有：正X型四旋翼(Quadcopter)，倾转三旋翼(Tricopter)，倾转双旋翼(Bicopter)，矢量共轴双旋翼(Singlecopter)，全驱动倾转三旋翼，全驱动六旋翼。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="不同构型旋翼无人机的控制">
+<meta property="og:url" content="http://example.com/2023/01/27/y2023m01/%E4%B8%8D%E5%90%8C%E6%9E%84%E5%9E%8B%E6%97%8B%E7%BF%BC%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%9A%84%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="WuYangNing">
+<meta property="og:description" content="摘要：讨论由多组倾转或固定旋翼驱动的单一刚体无人机的姿态&#x2F;位置轨迹跟踪控制。包含的无人机类型有：正X型四旋翼(Quadcopter)，倾转三旋翼(Tricopter)，倾转双旋翼(Bicopter)，矢量共轴双旋翼(Singlecopter)，全驱动倾转三旋翼，全驱动六旋翼。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://example.com/img/y2023m01/1-1.png">
+<meta property="og:image" content="http://example.com/img/y2023m01/1-2.png">
+<meta property="og:image" content="http://example.com/img/y2023m01/2-1.png">
+<meta property="og:image" content="http://example.com/img/y2023m01/2-2.png">
+<meta property="og:image" content="http://example.com/img/y2023m01/2-3.png">
+<meta property="og:image" content="http://example.com/img/y2023m01/2-4.png">
+<meta property="og:image" content="http://example.com/img/y2023m01/2-5.png">
+<meta property="og:image" content="http://example.com/img/y2023m01/3-1.png">
+<meta property="og:image" content="http://example.com/img/y2023m01/3-2.png">
+<meta property="article:published_time" content="2023-01-27T09:04:21.505Z">
+<meta property="article:modified_time" content="2023-01-28T07:47:57.930Z">
+<meta property="article:author" content="WuYangNing">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/img/y2023m01/1-1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>不同构型旋翼无人机的控制 | WuYangNing</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">WuYangNing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-all-posts">
+          <a href="/default-index/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            All posts
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/27/y2023m01/%E4%B8%8D%E5%90%8C%E6%9E%84%E5%9E%8B%E6%97%8B%E7%BF%BC%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%9A%84%E6%8E%A7%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/icon.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WuYangNing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">不同构型旋翼无人机的控制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2023-01-27T17:04:21+08:00">
+                2023-01-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>摘要：讨论由多组倾转或固定旋翼驱动的单一刚体无人机的姿态/位置轨迹跟踪控制。包含的无人机类型有：正X型四旋翼(Quadcopter)，倾转三旋翼(Tricopter)，倾转双旋翼(Bicopter)，矢量共轴双旋翼(Singlecopter)，全驱动倾转三旋翼，全驱动六旋翼。</strong><br><span id="more"></span></p>
+<h1><span id="1-不同构型旋翼无人机的控制">1 不同构型旋翼无人机的控制</span></h1><p>&emsp;考虑由多组倾转或者固定电机驱动的单一刚体旋翼无人机，有如下假设：</p>
+<ul>
+<li>忽略螺旋桨、电机转子的质量和转动惯量，即除了螺旋桨提供升力和反作用力矩，其他附加的惯性力和科氏力都忽略不计。</li>
+<li>对于倾转旋翼，忽略倾转舵机的响应时间，即假设控制过程中舵机能够快速到达指定角度。</li>
+<li>忽略其他空气动力学因素产生的作用力。</li>
+<li>无人机的重心和质心重合，即重力的作用不会使机体发生旋转。</li>
+<li>不考虑环境扰动。</li>
+</ul>
+<p>则旋翼无人机控制问题可以被简化为一个刚体的控制问题，对于给定的期望轨迹和测量得到的状态量，基于简化的刚体动力学，设计位置和姿态控制器，得到期望的机体作用力和力矩，再结合无人机构型，计算电机的混控，由位置和姿态控制的输入计算期望电机输出和舵机转角。其大致的控制流程如图所示。</p>
+<p><img src="/img/y2023m01/1-1.png" alt></p>
+<p>需要说明的是：上述假设与实际情况有比较大的差异，但是如果无人机的构型对简化的建模不是特别敏感(各种建模不确定性满足李普希茨条件)的话，利用控制器的高增益，也是能够达到不错的控制效果的。如果需要更好的控制性能，则需要更少的假设，更精确的建模，使用性能更好的控制器等。</p>
+<h2><span id="11-单一刚体的动力学和控制">1.1 单一刚体的动力学和控制</span></h2><p>&emsp;根据牛顿-欧拉法，简化成单一刚体的无人机动力学可以表示为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&\dot{\boldsymbol{p}}=\boldsymbol{v}\tag{1.1}\\ 
+&\dot{\boldsymbol{v}}=M^{-1}R\boldsymbol{f}-g\boldsymbol{e}_3\tag{1.2}\\ 
+&\dot{R}=R\mathrm{sk}(\boldsymbol{\omega})\tag{1.3}\\ 
+&\dot{\boldsymbol{\omega}}=J^{-1}(-\boldsymbol{\omega}\times J\boldsymbol{\omega}+\boldsymbol{\tau}) \tag{1.4}
+\end{align}</script><p>其中：</p>
+<ul>
+<li>$\boldsymbol{p}\in\mathbb{R}^3$和$\boldsymbol{v}\in\mathbb{R}^3$分别为无人机在绝对坐标系下的位置和速度。</li>
+<li>$M\in\mathbb{R}$和$J\in\mathbb{R}^{3\times3}$分别为无人机的质量和惯性矩阵。</li>
+<li>$R\in SO(3)$为无人机的姿态旋转矩阵。</li>
+<li>$g$为重力加速度，$\boldsymbol{e}_3=[0,0,1]^{\mathrm{T}}$。</li>
+<li>$\boldsymbol{\omega}$为无人机角速度在机体坐标系下的表示。</li>
+<li>$\boldsymbol{f}\in\mathbb{R}^3$和$\boldsymbol{\tau}\in\mathbb{R}^3$分别为无人机所受力和力矩在机体坐标系下的表示。</li>
+</ul>
+<p>上述动力学中，位置和速度的表示是在绝对坐标系下，角速度的表示则在机体坐标系下。这主要是考虑到实际应用中，传感器测量得到的通常是绝对坐标系下的位置和速度(GPS)，以及机体坐标系下的角速度(IMU)。根据表示状态量的坐标系的不同，动力学的表示也会有所差异。</p>
+<p>&emsp;本文中涉及的无人机可分为非完整约束欠驱动和全驱动两类。对于欠驱动无人机，$\boldsymbol{f}$和$\boldsymbol{\tau}$中存在元素为零或者相互耦合的量，因此在控制中不能全部作为系统的输入，需要结合受控对象选择需要控制的状态量和控制输入。例如平面四旋翼无人机，四个旋翼不能提供机体侧向力，即$\boldsymbol{f}=[0,0,f_z]^{\mathrm{T}}$，为了实现3个自由度的位置控制，需要将$R\boldsymbol{f}$作为位置环的控制输入，再根据这一输入解算出期望的姿态$R$和升力$f_z$，设计姿态控制器进行跟踪。对于全驱动的无人机，$\boldsymbol{f}$和$\boldsymbol{\tau}$总共有六个互相正交的量，每个量都可以独立输入，因此可以将$\boldsymbol{f}$和$\boldsymbol{\tau}$作为系统的输入，分别控制无人机的6个自由度。</p>
+<p>&emsp;对于位置控制器，这里初步将$R\boldsymbol{f}$作为控制输入给出一个能够收敛的控制器。定义期望轨迹为$\boldsymbol{p}_d$，误差$\boldsymbol{e}=\boldsymbol{p}-\boldsymbol{p}_d$，则关于控制误差的位置动力学可以写作：</p>
+<script type="math/tex; mode=display">
+\ddot{\boldsymbol{e}}=M^{-1}R\boldsymbol{f}-g\boldsymbol{e}_3-\ddot{\boldsymbol{p}}_d \tag{1.5}</script><p>设计控制器为：</p>
+<script type="math/tex; mode=display">
+R\boldsymbol{f}=M(-k_p\boldsymbol{e}-k_d\dot{\boldsymbol{\boldsymbol{e}}}+g\boldsymbol{e}_3+\ddot{\boldsymbol{p}}_d) \tag{1.6}</script><p>则闭环动力学可以写作：</p>
+<script type="math/tex; mode=display">
+\ddot{\boldsymbol{e}}+k_d\dot{\boldsymbol{e}}+k_p\boldsymbol{e}=0 \tag{1.7}</script><p>利用二阶线性常系数齐次微分方程的解，可知，当$k_p,k_d&gt;0$且$k_d^2-4k_p&gt;0$时，上述微分方程对应的特征根方程有两个负实数解:$r_1,r_2&lt;0$，微分方程的解为$\boldsymbol{e}=C_1\exp(r_1t)+C_2\exp(r_2t)$，当$t\rightarrow\infty$时$\boldsymbol{e}\rightarrow0$。<br>&emsp;对于姿态控制，可参考 <a target="_blank" rel="noopener" href="https://wuyangning.top/2022/11/03/y2022m11/%E5%A7%BF%E6%80%81%E6%8E%A7%E5%88%B6/">刚体姿态控制</a>。</p>
+<p>&emsp;基于设计好控制器，可以计算出控制无人机所需的机体作用力$\boldsymbol{f}$和作用力矩$\boldsymbol{\tau}$，再利用无人机的混控关系求得旋翼的转速和倾转电机的角度。</p>
+<h2><span id="12-电机混控">1.2 电机混控</span></h2><p><img src="/img/y2023m01/1-2.png" alt></p>
+<p>&emsp;无人机每个旋翼提供的升力和反作用力矩如图所示。定义第$i$个螺旋桨的转子坐标系为$R_i$，转子坐标系的$z$轴与电机轴重合。记第$i$个螺旋桨提供的升力和反作用力矩分别$f_i$和$\tau_i$，对于逆时针(CCW)旋转的螺旋桨反作用力矩为负，对于顺时针(CW)旋转的桨反作用力矩为正。$f_i$和$\tau_i$与螺旋桨转速$\omega_i$的关系可以近似为：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&f_i=C_f\omega^2_i\\
+&\tau_i=aC_{\tau}\omega^2_i
+\end{aligned}\tag{1.8}</script><p>其中$C_f$和$C_{\tau}$是与空气动力学参数相关的系数。$a$表示螺旋桨的旋向，当螺旋桨逆时针(CCW)旋转时，$a=-1$；当螺旋桨顺时针(CW)旋转时，$a=1$。因此可以将$\tau_i$记作：</p>
+<script type="math/tex; mode=display">
+\tau_i=akf_i \tag{1.9}</script><p>其中$k=C_{\tau}/C_f。$考虑到利用公式就可由升力求得对应的螺旋桨转速，为了简便书写，后续的推导将以螺旋桨的升力作为控制输入。</p>
+<p>&emsp;第$i$个螺旋桨在作用点处的力和力矩在机体坐标系下的表示为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&F_i=R_i[0,0,f_i]^{\mathrm{T}} \tag{1.10}\\
+&M_i=R_i[0,0,akf_i]^{\mathrm{T}} \tag{1.11}
+\end{align}</script><p>将所有力和力矩向质心简化，$n$个螺旋桨提供的合力在机体坐标系下的表示为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&\boldsymbol{f}=\sum^{n}_{i=1}F_i \tag{1.12}\\
+&\boldsymbol{\tau}=\sum^{n}_{i=1}\boldsymbol{r}_i\times F_i+M_i \tag{1.13}
+\end{align}</script><p>其中$\boldsymbol{r}_i$为机体质心到螺旋桨受力点的位置矢量。解(1.11)和(1.12)，就可以由控制输入$\boldsymbol{f}$和$\boldsymbol{\tau}$计算每个螺旋桨的升力和倾转电机的角度。</p>
+<h1><span id="2-欠驱动无人机">2 欠驱动无人机</span></h1><h2><span id="21-平面四旋翼正x型-qaudcopter">2.1 平面四旋翼(正X型-Qaudcopter)</span></h2><p><img src="/img/y2023m01/2-1.png" alt></p>
+<p>&emsp;如图所示，选取螺旋桨1和3产生的反作用力矩为正，螺旋桨2和4产生的反作用力矩为负(力矩的正负可以用右手定则判断)。每个螺旋桨到坐标系x轴和y轴的距离都为$l$。首先，利用第一章中的公式来推导混控矩阵，可以列出以下关系：</p>
+<script type="math/tex; mode=display">
+R_1=R_2=R_3=R_4=\mathrm{diag}(1,1,1)\tag{2.1}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&F_1=R_1[0,0,f_1]^{\mathrm{T}},&M_1&=R_1[0,0,kf_1]^{\mathrm{T}}\\
+&F_2=R_2[0,0,f_2]^{\mathrm{T}},&M_2&=R_2[0,0,-kf_2]^{\mathrm{T}}\\
+&F_3=R_3[0,0,f_3]^{\mathrm{T}},&M_3&=R_3[10,0,kf_3]^{\mathrm{T}}\\
+&F_4=R_4[0,0,f_4]^{\mathrm{T}},&M_4&=R_4[0,0,-kf_4]^{\mathrm{T}}
+\end{aligned}\tag{2.2}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{r}_1=[l,l,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_2=[-l,l,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_3=[-l,-l,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_4=[l,-l,0]^{\mathrm{T}}
+\end{aligned}\tag{2.3}</script><p>根据公式(1.12)和(1.13)可以得到：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{f}=\begin{bmatrix}
+0\\ 
+0\\ 
+f_1+f_2+f_3+f_4
+\end{bmatrix},~\boldsymbol{\tau}=\begin{bmatrix}
+lf_1+lf_2-lf_3-lf_4\\ 
+-lf_1+lf_2+lf_3-lf_4\\\ 
+kf_1-kf_2+kf_3-kf_4
+\end{bmatrix}\tag{2.4}</script><p>记$\boldsymbol{f}=[f_x,f_y,f_z]^{\mathrm{T}}$和$\boldsymbol{\tau}_b=[\tau_x,\tau_y,\tau_z]^{\mathrm{T}}$，可以写成矩阵形式：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_z\\ 
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}=\begin{bmatrix}
+1&1&1&1\\ 
+l&l&-l&-l\\ 
+-l&l&l&-l\\
+k&-k&k&-k
+\end{bmatrix}\begin{bmatrix}
+f_1\\ 
+f_2\\
+f_3\\
+f_4
+\end{bmatrix}\tag{2.5}</script><p>对公式(2.5)求逆可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_1\\ 
+f_2\\
+f_3\\
+f_4
+\end{bmatrix}=\frac{1}{4lk}\begin{bmatrix}
+lk&k&-k&l\\ 
+lk&k&k&-l\\ 
+lk&-k&k&l\\
+lk&-k&-k&-l
+\end{bmatrix}\begin{bmatrix}
+f_z\\ 
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}\tag{2.6}</script><p>&emsp;可以看出四旋翼无人机无法提供侧向的机体作用力，需要将期望姿态作为位置控制器的输入以实现三个自由度的位置控制。对于公式(1.6)中的设计的位置控制器，将等式右边计算出来的控制量记作：$\boldsymbol{u}=[u_x,u_y,u_z]^{\mathrm{T}}$，当期望姿态满足如下公式时，根据1.1中的推导，位置控制器能够收敛：</p>
+<script type="math/tex; mode=display">
+R^*\begin{bmatrix}
+0\\ 
+0\\ 
+f_z
+\end{bmatrix}=\begin{bmatrix}
+u_x\\ 
+u_y\\ 
+u_z
+\end{bmatrix}\tag{2.7}</script><p>其中$R^{\star}$为期望姿态。<br>定义$R^{\star}=[\boldsymbol{n}_1,\boldsymbol{n}_2,\boldsymbol{n}_3]$，其中 $\boldsymbol{n}_i$为三维列向量，则根据(2.8)可以解得期望的姿态和升力：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&f_z=||\boldsymbol{u}||\\
+&\boldsymbol{n}_1=\boldsymbol{n}_2\times\boldsymbol{n}_3\\
+&\boldsymbol{n}_2=\frac{\boldsymbol{n}_3\times\boldsymbol{h}}{||\boldsymbol{n}_3\times\boldsymbol{h}||}\\
+&\boldsymbol{n}_3=\frac{\boldsymbol{u}}{||\boldsymbol{u}||}
+\end{aligned} \tag{2.8}</script><p>其中$\boldsymbol{h}=[\mathrm{cos}{\psi}^{\star},\mathrm{cos}{\psi}^{\star},0]^{\mathrm{T}}$，$\psi^{\star}$为无人机的期望偏航角。最后设计姿态控制器跟踪$R^{\star}$就实现四旋翼无人机的控制了，可以参考 <a target="_blank" rel="noopener" href="https://wuyangning.top/2022/11/03/y2022m11/%E5%A7%BF%E6%80%81%E6%8E%A7%E5%88%B6/">刚体姿态控制</a>。四旋翼无人机的控制流程图大致如下：</p>
+<p><img src="/img/y2023m01/2-2.png" alt></p>
+<p>ps：这种位置和姿态串级控制的这种方式，建立在内外环分离假设的基础上，即假设姿态环是0误差跟踪的。因此在应用中，要求内环的响应速度要高于外环。此外，由于外环的控制输入是内环的跟踪期望，因而内环的控制中会涉及高阶的状态量(姿态的跟踪需要$R^{\star}$和$\boldsymbol{\omega}^{\star}$，位置控制器中$R^*$与$\dot{\boldsymbol{e}}$相关，因此$\boldsymbol{\omega}^{\star}$会与$\ddot{\boldsymbol{e}}$有关)，如果使用差分来求取完整的内环期望轨迹$R^{\star}$和$\boldsymbol{\omega}^{\star}$，会导致误差和噪声被放大。在实现中可以省略内环期望的高阶项或者使用滤波器平滑外环的控制输入，即假设内环期望信号的高阶量是慢变或有界的。<br>&emsp;由位置控制器和姿态控制器可以求出无人机控制所需的机体升力和力矩$f_z,\tau_x,\tau_y,\tau_z$，再代入公式(2.6)可以求得四个旋翼的升力。</p>
+<h2><span id="22-三旋翼tri-copter">2.2 三旋翼(Tri-copter)</span></h2><p><img src="/img/y2023m01/2-3.png" alt></p>
+<p>&emsp;三个旋翼产生的升力和反作用力矩方向如图所示，3号旋翼为倾转旋翼，倾转角度为$\theta$，机架为正三角形布置，机臂长为$l$。与四旋翼的步骤一样，先推导混控矩阵，可以列出：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&R_1=R_2=\mathrm{diag}(1,1,1)\\
+&R_3=\mathrm{Rot}_x(\theta)=\begin{bmatrix}
+1 & 0 &0 \\ 
+0 & \mathrm{cos}\theta &-\mathrm{sin}\theta \\ 
+0 & \mathrm{sin}\theta& \mathrm{cos}\theta
+\end{bmatrix}
+\end{aligned}\tag{2.9}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&F_1=R_1[0,0,f_1]^{\mathrm{T}},&M_1&=R_1[0,0,kf_1]^{\mathrm{T}}\\
+&F_2=R_2[0,0,f_2]^{\mathrm{T}},&M_2&=R_2[0,0,kf_2]^{\mathrm{T}}\\
+&F_3=R_3[0,0,f_3]^{\mathrm{T}},&M_3&=R_3[0,0,kf_3]^{\mathrm{T}}\\
+\end{aligned}\tag{2.10}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{r}_1=\frac{1}{2}[l,\sqrt{3}l,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_2=\frac{1}{2}[l,-\sqrt{3}l,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_3=[-l,0,0]^{\mathrm{T}}
+\end{aligned}\tag{2.11}</script><p>根据公式(1.12)和(1.13)可以得到：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{f}_b=\begin{bmatrix}
+0\\ 
+-f_3\mathrm{sin}\theta\\ 
+f_1+f_2+f_3\mathrm{cos}\theta
+\end{bmatrix},~\boldsymbol{\tau}_b=\begin{bmatrix}
+\frac{\sqrt{3}}{2}lf_1 - \frac{\sqrt{3}}{2}lf_2\\ 
+lf_3\mathrm{cos}\theta - \frac{1}{2}lf_1 - \frac{1}{2}lf_2 - kf_3\mathrm{sin}\theta\\\ 
+kf_3\mathrm{cos}\theta + kf_1 + kf_2 + lf_3\mathrm{sin}\theta
+\end{bmatrix}\tag{2.12}</script><p>可以看出无人机受力与待求的$f_1,f_2,f_3,\theta$之间不是线型关系，可以先将$f_3\mathrm{cos}\theta$和$f_3\mathrm{sin}\theta$作为待求量，将上式写成矩阵形式：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_y\\ 
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}=\begin{bmatrix}
+0&0&0&-1\\ 
+1&1&1&0\\ 
+\frac{\sqrt{3}}{2}l&-\frac{\sqrt{3}}{2}l&0&0\\
+-\frac{1}{2}l&-\frac{1}{2}l&l&-k\\
+k&k&k&l
+\end{bmatrix}\begin{bmatrix}
+f_1\\ 
+f_2\\
+f_3\mathrm{cos}\theta\\
+f_3\mathrm{sin}\theta
+\end{bmatrix}\tag{2.13}</script><p>考虑到Tri-copter无人机只有4个可以驱动的量，因此$f_y=-f_3\mathrm{sin}\theta$为附加作用力，考虑到倾转电机工作的角度通常不会太大，因此这里假设$f_y\approx0$。解公式(2.13)可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_1\\ 
+f_2\\
+f_3\mathrm{cos}\theta\\
+f_3\mathrm{sin}\theta
+\end{bmatrix}
+=\frac{1}{3l^2}\begin{bmatrix}k^{2} + l^{2} & \sqrt{3}l & - l & -k\\
+k^{2} + l^{2} & - \sqrt{3}l & -l & -k\\
+-2k^{2} + l^{2} & 0 & 2l & 2k\\
+-3kl & 0 & 0 & 3l\end{bmatrix}\begin{bmatrix}
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}\tag{2.14}</script><p>&emsp;得到混控矩阵后，可以看出Tri-copter的位置和姿态控制器的输入与四旋翼是一样的，其余步骤代入四旋翼的控制流程即可。</p>
+<h2><span id="23-倾转双旋翼bi-copter">2.3 倾转双旋翼(Bi-copter)</span></h2><p><img src="/img/y2023m01/2-4.png" alt></p>
+<p>&emsp;Bi-copter的两个旋翼产生的机体作用力和力矩如图所示，倾转电机的角度分别为$\theta_1$和$\theta_2$，单机臂长为$l_y$，旋翼距离质心的高度为$l_z$，可以列出：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&R_1=\mathrm{Rot}_z(\frac{\pi}{2})\mathrm{Rot}_x(\theta_1)\\
+&R_2=\mathrm{Rot}_z(\frac{\pi}{2})\mathrm{Rot}_x(\theta_2)
+\end{aligned}\tag{2.15}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&F_1=R_1[0,0,f_1]^{\mathrm{T}},&M_1&=R_1[0,0,kf_1]^{\mathrm{T}}\\
+&F_2=R_2[0,0,f_2]^{\mathrm{T}},&M_2&=R_2[0,0,-kf_2]^{\mathrm{T}}\\
+\end{aligned}\tag{2.16}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{r}_1=[0,l_y,l_z]^{\mathrm{T}}\\
+&\boldsymbol{r}_2=[0,-l_y,l_z]^{\mathrm{T}}\\
+\end{aligned}\tag{2.17}</script><p>根据公式(1.12)和(1.13)可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{f}_b=\begin{bmatrix}
+f_1\mathrm{sin}\theta_1 + f_2\mathrm{sin}\theta_2\\ 
+0\\ 
+f_1\mathrm{cos}\theta_1 + f_2\mathrm{cos}\theta_2
+\end{bmatrix},\\
+&\boldsymbol{\tau}_b=\begin{bmatrix}
+l_yf_1\mathrm{cos}\theta_1 - l_yf_2\mathrm{cos}\theta_2 + kf_1\mathrm{sin}\theta_1 - kf_2\mathrm{sin}\theta_2\\ 
+l_zf_1\mathrm{sin}\theta_1 + l_zf_2\mathrm{sin}\theta_2\\
+kf_1\mathrm{cos}\theta_1 - kf_2\mathrm{cos}\theta_2 - l_yf_1\mathrm{sin}\theta_1 + l_yf_2\mathrm{sin}\theta_2
+\end{bmatrix}
+\end{aligned}\tag{2.18}</script><p>写成矩阵形式：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_x\\ 
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}=\begin{bmatrix}
+0&1&0&1\\ 
+1&0&1&0\\ 
+l_y&k&-l_y&-k\\ 
+0&l_z&0&l_z\\
+k&-l_y&-k&l_y
+\end{bmatrix}\begin{bmatrix}
+f_1\mathrm{cos}\theta_1\\ 
+f_1\mathrm{sin}\theta_1\\ 
+f_2\mathrm{cos}\theta_2\\
+f_2\mathrm{sin}\theta_2\\ 
+\end{bmatrix}\tag{2.19}</script><p>$f_x=f_1\mathrm{sin}\theta_1+f_2\mathrm{sin}\theta_2$为附加作用力，与tricopter类似，这里假设$f_x\approx0$。假设$l_z\neq0$(如果$l_z=0$将无法提供$y$方向的力矩)，解公式(2.19)可以得到的：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_1\mathrm{cos}\theta_1\\ 
+f_1\mathrm{sin}\theta_1\\ 
+f_2\mathrm{cos}\theta_2\\
+f_2\mathrm{sin}\theta_2\\ 
+\end{bmatrix}=\frac{1}{2}\begin{bmatrix}1 & \frac{l_y}{k^{2} + l_y^{2}} & 0 & \frac{k}{k^{2} + l_y^{2}}\\
+0 & \frac{k}{k^{2} + l_y^{2}} & \frac{1}{l_z} & - \frac{l_y}{k^{2} + l_y^{2}}\\
+1 & - \frac{l_y}{k^{2} + l_y^{2}} & 0 & - \frac{k}{k^{2} + l_y^{2}}\\
+0 & - \frac{k}{k^{2} + l_y^{2}} & \frac{1}{l_z} & \frac{l_y}{k^{2} + l_y^{2}}\end{bmatrix}\begin{bmatrix}
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}\tag{2.20}</script><p>&emsp;其余步骤参考四旋翼无人机的控制流程。</p>
+<h2><span id="24-矢量共轴双旋翼">2.4 矢量共轴双旋翼</span></h2><p><img src="/img/y2023m01/2-5.png" alt></p>
+<p>矢量共轴双旋翼的机构设计如图所示，可以列出：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+R_1=\mathrm{Rot}_x(\theta_1)\\ 
+R_2=\mathrm{Rot}_y(\theta_2)
+\end{aligned}\tag{2.21}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&F_1=R_1[0,0,f_1]^{\mathrm{T}},&M_1&=R_1[0,0,kf_1]^{\mathrm{T}}\\
+&F_2=R_2[0,0,f_2]^{\mathrm{T}},&M_2&=R_2[0,0,-kf_2]^{\mathrm{T}}\\
+\end{aligned}\tag{2.22}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{r}_1=[0,0,l]^{\mathrm{T}}\\
+&\boldsymbol{r}_2=[0,0,-l]^{\mathrm{T}}\\
+\end{aligned}\tag{2.23}</script><p>可以得到：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{f}_b=\begin{bmatrix}
+f_2\mathrm{sin}\theta_2\\ 
+-f_1\mathrm{sin}\theta_1\\ 
+f_1\mathrm{cos}\theta_1 + f_2\mathrm{cos}\theta_2
+\end{bmatrix},
+\boldsymbol{\tau}_b=\begin{bmatrix}
+lf_1\mathrm{sin}\theta_1 - kf_2\mathrm{sin}\theta_2\\ 
+-kf_1\mathrm{sin}\theta_1 - lf_2\mathrm{sin}\theta_2\\
+kf_1\mathrm{cos}\theta_1 - kf_2\mathrm{cos}\theta_2
+\end{bmatrix}\tag{2.24}</script><p>写成矩阵形式：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_x\\
+f_y\\ 
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}=\begin{bmatrix}
+0&0&0&1\\ 
+0&-1&0&0\\ 
+1&0&1&0\\ 
+0&l&0&-k\\
+0&-k&0&-l\\
+k&0&-k&0&
+\end{bmatrix}\begin{bmatrix}
+f_1\mathrm{cos}\theta_1\\ 
+f_1\mathrm{sin}\theta_1\\ 
+f_2\mathrm{cos}\theta_2\\ 
+f_2\mathrm{sin}\theta_2
+\end{bmatrix}\tag{2.25}</script><p>将$f_x$和$f_y$为附加作用力，与tricopter类似，这里假设$f_x,f_y\approx0$，解上式可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_1\mathrm{cos}\theta_1\\ 
+f_1\mathrm{sin}\theta_1\\ 
+f_2\mathrm{cos}\theta_2\\ 
+f_2\mathrm{sin}\theta_2
+\end{bmatrix}=\begin{bmatrix}\frac{1}{2} & 0 & 0 & \frac{1}{2 k}\\0 & \frac{l}{k^{2} + l^{2}} & - \frac{k}{k^{2} + l^{2}} & 0\\\frac{1}{2} & 0 & 0 & - \frac{1}{2 k}\\0 & -\frac{k}{k^{2} +l^{2}} & -\frac{l}{k^{2} + l^{2}} & 0\end{bmatrix}
+\begin{bmatrix} 
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}\tag{2.26}</script><p>&emsp;其余步骤参考四旋翼无人机的控制流程。</p>
+<h1><span id="3-全驱动无人机">3 全驱动无人机</span></h1><h2><span id="31-全驱动倾转三旋翼">3.1 全驱动倾转三旋翼</span></h2><p><img src="/img/y2023m01/3-1.png" alt></p>
+<p>&emsp;三个旋翼的坐标系定义如图所示，三个旋翼都为倾转旋翼，倾转角度分别为$\theta_1,\theta_1,\theta_3$，机架为正三角形布置，机臂长为$l$。可以列出：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&R_1=\mathrm{Rot}_z(-\frac{2\pi}{3})\mathrm{Rot}_x(\theta_1)\\
+&R_2=\mathrm{Rot}_z(-\frac{\pi}{3})\mathrm{Rot}_x(\theta_2)\\
+&R_3=\mathrm{Rot}_x(\theta_3)
+\end{aligned}\tag{3.1}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&F_1=R_1[0,0,f_1]^{\mathrm{T}},&M_1&=R_1[0,0,kf_1]^{\mathrm{T}}\\
+&F_2=R_2[0,0,f_2]^{\mathrm{T}},&M_2&=R_2[0,0,-kf_2]^{\mathrm{T}}\\
+&F_3=R_3[0,0,f_3]^{\mathrm{T}},&M_3&=R_3[0,0,kf_3]^{\mathrm{T}}\\
+\end{aligned}\tag{3.2}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{r}_1=\frac{1}{2}[l,\sqrt{3}l,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_2=\frac{1}{2}[l,-\sqrt{3}l,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_3=[-l,0,0]^{\mathrm{T}}
+\end{aligned}\tag{3.3}</script><p>根据公式(1.12)和(1.13)可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\boldsymbol{f}&=\begin{bmatrix}
+-\frac{\sqrt{3}}{2}f_1\mathrm{sin}\theta_1 - \frac{\sqrt{3}}{2}f_2\mathrm{sin}\theta_2\\ 
+\frac{1}{2}f_1\mathrm{sin}\theta_1 - \frac{1}{2}f_2\mathrm{sin}\theta_2 - f_3\mathrm{sin}\theta_3\\ 
+f_1\mathrm{cos}\theta_1 + f_2\mathrm{cos}\theta_2 + f_3\mathrm{cos}\theta_3
+\end{bmatrix},\\
+\boldsymbol{\tau}&=\begin{bmatrix}
+\frac{\sqrt{3}}{2}lf_1\mathrm{cos}\theta_1 - \frac{\sqrt{3}}{2}lf_2\mathrm{cos}\theta_2 - \frac{\sqrt{3}}{2}kf_1\mathrm{sin}\theta_1 + \frac{\sqrt{3}}{2}kf_2\mathrm{sin}\theta_2\\ 
+-\frac{1}{2}lf_1\mathrm{cos}\theta_1 - \frac{1}{2}lf_2\mathrm{cos}\theta_2 + lf_3\mathrm{cos}\theta_3 + \frac{1}{2}kf_1\mathrm{sin}\theta_1 + \frac{1}{2}kf_2\mathrm{sin}\theta_2 - kf_3\mathrm{sin}\theta_3\\ 
+kf_1\mathrm{cos}\theta_1 - kf_2\mathrm{cos}\theta_2 + kf_3\mathrm{cos}\theta_3 + lf_1\mathrm{sin}\theta_1 - lf_2\mathrm{sin}\theta_2 + lf_3\mathrm{sin}\theta_3
+\end{bmatrix}
+\end{aligned}\tag{3.4}</script><p>写成矩阵形式：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_x\\
+f_y\\ 
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}=\begin{bmatrix}
+0&-\frac{\sqrt{3}}{2}&0&-\frac{\sqrt{3}}{2}&0&0\\ 
+0&\frac{1}{2}&0&-\frac{1}{2}&0&-1\\ 
+1&0&1&0&1&0\\ 
+\frac{\sqrt{3}}{2}l&-\frac{\sqrt{3}}{2}k&-\frac{\sqrt{3}}{2}l&\frac{\sqrt{3}}{2}k&0&0\\
+-\frac{1}{2}l&\frac{1}{2}k&-\frac{1}{2}l&\frac{1}{2}k&l&-k\\
+k&l&-k&-l&k&l
+\end{bmatrix}\begin{bmatrix}
+f_1\mathrm{cos}\theta_1\\ 
+f_1\mathrm{sin}\theta_1\\ 
+f_2\mathrm{cos}\theta_2\\
+f_2\mathrm{sin}\theta_2\\ 
+f_3\mathrm{cos}\theta_3\\
+f_3\mathrm{sin}\theta_3\\ 
+\end{bmatrix}\tag{3.5}</script><p>对上式求逆(可以使用sympy计算)可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_1\mathrm{cos}\theta_1\\ 
+f_1\mathrm{sin}\theta_1\\ 
+f_2\mathrm{cos}\theta_2\\
+f_2\mathrm{sin}\theta_2\\ 
+f_3\mathrm{cos}\theta_3\\
+f_3\mathrm{sin}\theta_3\\ 
+\end{bmatrix}=\frac{1}{8k^2+9l^2}\begin{bmatrix}\frac{- 4 \sqrt{3} k^{3} - 3 \sqrt{3} k l^{2}}{3l} & \frac{4 k^{3} + 5 k l^{2}}{l} & 2 k^{2} + 3 l^{2} & \frac{4 \sqrt{3} k^{2} + 9 \sqrt{3} l^{2}}{3l} & \frac{- 4 k^{2} - 3 l^{2}}{l} & 2k\\
+\frac{- 10 \sqrt{3} k^{2} - 9 \sqrt{3} l^{2}}{3} & 2 k^{2} + 3 l^{2} & -k l & -2\sqrt{3} k & -2k & 3 l\\
+-\sqrt{3} k l & - k l & 4 k^{2} + 3 l^{2} & -3 \sqrt{3} l & -3 l & - 4 k\\
+-2 \sqrt{3} k^{2} - 3 \sqrt{3} l^{2} &-2 k^{2} - 3 l^{2} &k l & 2\sqrt{3} k & 2k & -3 l\\
+\frac{4\sqrt{3} k^{3} + 6\sqrt{3} k l^{2}}{3l} & \frac{- 4 k^{3} - 4 k l^{2}}{l} & 2 k^{2} + 3 l^{2} & - \frac{4 \sqrt{3} k^{2}}{3l} & \frac{4 k^{2} + 6 l^{2}}{l} & 2k\\
+-\frac{2\sqrt{3} k^{2}}{3} & -6 k^{2} -6 l^{2} & -k l & -2\sqrt{3} k & -2k &3 l\end{bmatrix}\begin{bmatrix}
+f_x\\
+f_y\\ 
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}\tag{3.6}</script><p>&emsp;全驱动无人机的自由度是完整的，$\boldsymbol{f}$和$\boldsymbol{\tau}$可以分别作为位置控制器和姿态控制器的控制输入。对于位置控制器，根据公式(1.6)设计$\boldsymbol{f}=MR^{\mathrm{T}}(-k_p\boldsymbol{e}-k_d\dot{\boldsymbol{\boldsymbol{e}}}+g\boldsymbol{e}_3-\boldsymbol{f}_e+\ddot{\boldsymbol{p}}_d) $。对于姿态控制器，可以参考 <a target="_blank" rel="noopener" href="https://wuyangning.top/2022/11/03/y2022m11/%E5%A7%BF%E6%80%81%E6%8E%A7%E5%88%B6/">刚体姿态控制</a>。</p>
+<h2><span id="32-全驱动六旋翼">3.2 全驱动六旋翼</span></h2><p><img src="/img/y2023m01/3-2.png" alt></p>
+<p>&emsp;六个固定旋翼的的坐标系定义如图所示，机架为正六边形布局，旋翼倾斜角为45度。可以列出：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&R_1=\mathrm{Rot}_z(\frac{\pi}{6})\mathrm{Rot}_x(\frac{\pi}{4})\\
+&R_2=\mathrm{Rot}_z(-\frac{\pi}{6})\mathrm{Rot}_x(-\frac{\pi}{4})\\
+&R_3=\mathrm{Rot}_z(\frac{\pi}{2})\mathrm{Rot}_x(-\frac{\pi}{4})\\
+&R_4=\mathrm{Rot}_z(\frac{\pi}{2})\mathrm{Rot}_x(-\frac{\pi}{4})\\
+&R_5=\mathrm{Rot}_z(-\frac{\pi}{6})\mathrm{Rot}_x(-\frac{\pi}{4})\\
+&R_6=\mathrm{Rot}_z(\frac{\pi}{6})\mathrm{Rot}_x(\frac{\pi}{4})\\
+\end{aligned}\tag{3.7}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&F_1=R_1[0,0,f_1]^{\mathrm{T}},&M_1&=R_1[0,0,kf_1]^{\mathrm{T}}\\
+&F_2=R_2[0,0,f_2]^{\mathrm{T}},&M_2&=R_2[0,0,kf_2]^{\mathrm{T}}\\
+&F_3=R_3[0,0,f_3]^{\mathrm{T}},&M_3&=R_3[0,0,kf_3]^{\mathrm{T}}\\
+&F_4=R_4[0,0,f_4]^{\mathrm{T}},&M_4&=R_4[0,0,kf_4]^{\mathrm{T}}\\
+&F_5=R_5[0,0,f_5]^{\mathrm{T}},&M_5&=R_5[0,0,kf_5]^{\mathrm{T}}\\
+&F_6=R_6[0,0,f_6]^{\mathrm{T}},&M_6&=R_6[0,0,kf_6]^{\mathrm{T}}\\
+\end{aligned}\tag{3.8}</script><script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{r}_1=\frac{l}{2}[\sqrt{3},1,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_2=\frac{l}{2}[\sqrt{3},-1,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_3=l[0,1,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_4=l[0,-1,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_5=\frac{l}{2}[-\sqrt{3},1,0]^{\mathrm{T}}\\
+&\boldsymbol{r}_6=\frac{l}{2}[-\sqrt{3},-1,0]^{\mathrm{T}}
+\end{aligned}\tag{3.9}</script><p>根据公式(1.12)和(1.13)可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+&\boldsymbol{f}=\begin{bmatrix}
+\frac{\sqrt{2}}{4}&&\\
+&\frac{\sqrt{6}}{4}&\\
+&&\frac{\sqrt{2}}{2}
+\end{bmatrix}
+\begin{bmatrix}
+f_1+f_2-2f_3-2f_4+f_5+f_6\\ 
+-f_1+f_2+f_5-f_6\\ 
+f_1+f_2+f_3+f_4+f_5+f_6
+\end{bmatrix}\\
+&\boldsymbol{\tau}=\begin{bmatrix}
+\frac{\sqrt{2}}{4}&&\\
+&\frac{\sqrt{6}}{4}&\\
+&&\frac{\sqrt{2}}{2}
+\end{bmatrix}
+\begin{bmatrix}
+(l+k)f_1-(l-k)f_2+2(l-k)f_3-2(l+k)f_4+(l+k)f_5-(l-k)f_6
+\\ 
+-(l+k)f_1-(l-k)f_2+(l+k)f_5+ (l-k)f_6\\ 
+-(l-k)f_1+(l+k)f_2+(l+k)f_3-(l-k)f_4-(l-k)f_5+(l+k)f_6
+\end{bmatrix}\\
+\end{aligned}\tag{3.10}</script><p>写成矩阵形式：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_x\\
+f_y\\ 
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}=\begin{bmatrix}
+\frac{\sqrt{2}}{4}&\frac{\sqrt{2}}{4}&-\frac{\sqrt{2}}{2}&-\frac{\sqrt{2}}{2}&\frac{\sqrt{2}}{4}&\frac{\sqrt{2}}{4}\\ 
+-\frac{\sqrt{6}}{4}&\frac{\sqrt{6}}{4}&0&0&\frac{\sqrt{6}}{4}&-\frac{\sqrt{6}}{4}\\ 
+\frac{\sqrt{2}}{2}&\frac{\sqrt{2}}{2}&\frac{\sqrt{2}}{2}&\frac{\sqrt{2}}{2}&\frac{\sqrt{2}}{2}&\frac{\sqrt{2}}{2}\\ 
+\frac{\sqrt{2}}{4}(l+k)&-\frac{\sqrt{2}}{4}(l-k)&\frac{\sqrt{2}}{2}(l-k)&-\frac{\sqrt{2}}{2}(l+k)&\frac{\sqrt{2}}{4}(l+k)&-\frac{\sqrt{2}}{4}(l-k)\\
+-\frac{\sqrt{6}}{4}(l+k)&-\frac{\sqrt{6}}{4}(l-k)&0&0&\frac{\sqrt{6}}{4}(l+k)&\frac{\sqrt{6}}{4}(l-k)\\
+-\frac{\sqrt{2}}{2}(l-k)&\frac{\sqrt{2}}{2}(l+k)&\frac{\sqrt{2}}{2}(l+k)&-\frac{\sqrt{2}}{2}(l-k)&-\frac{\sqrt{2}}{2}(l-k)&\frac{\sqrt{2}}{2}(l+k)
+\end{bmatrix}\begin{bmatrix}
+f_1\\ 
+f_2\\ 
+f_3\\
+f_4\\ 
+f_5\\
+f_6\\ 
+\end{bmatrix}\tag{3.11}</script><p>对公式(3.11)求逆可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{bmatrix}
+f_1\\ 
+f_2\\ 
+f_3\\
+f_4\\ 
+f_5\\
+f_6\\ 
+\end{bmatrix}=\frac{\sqrt{2}}{6l}\begin{bmatrix}
+l-k&-\sqrt{3}(l-k)&l+k&1&-\sqrt{3}&-1\\
+l+k&\sqrt{3}(l+k)&l-k&-1&-\sqrt{3}&1\\
+-2(l+k)&0&l-k&2&0&1\\
+-2(l-k)&0&l+k&-2&0&-1\\
+l-k&\sqrt{3}(l-k)&l+k&1&\sqrt{3}&-1\\
+l+k&-\sqrt{3}(l+k)&l-k&-1&\sqrt{3}&1
+\end{bmatrix}\begin{bmatrix}
+f_x\\
+f_y\\ 
+f_z\\
+\tau_x\\
+\tau_y\\
+\tau_z
+\end{bmatrix}\tag{3.12}</script><p>&emsp;与全驱动倾转三旋翼类似，全驱动三旋翼的自由度是完整的，控制器的设计可参考3.1中的步骤。</p>
+<h1><span id="4-补充">4 补充</span></h1><p>&emsp;前面讨论了不同构型的无人机的基本控制，中间有一些可能需要解决的问题比较复杂，没有进行讨论，在这里列出：</p>
+<ul>
+<li><strong>混控关系的可逆性</strong>：这里以常见的平面六旋翼无人机为例，六旋翼无人机有$6$个可以驱动的旋翼，推导混控矩阵时会发现混控矩阵是一个$6\times6$的方阵，但是这个方阵的秩为$4$，是不可逆的，也就是说平面六旋翼无人机只有4个可以独立驱动的自由度。因此，如果想要设计一个全驱动的无人机，如何优化无人机的旋翼布局保证混控矩阵的可逆性，是一个需要考虑的问题。如果只考虑平面六旋翼4个可以独立驱动的自由度，以4个驱动力或力矩来求取6个旋翼的升力，会发现有无穷多个解，也就是说，如果无人机只驱动这四个自由度，旋翼的数量是冗余的。对于冗余的自由度，如何充分利用也是一个需要考虑的问题，例如如何用冗余的自由度应对旋翼故障，或是将部分控制任务放在0空间中，实现子任务和优先级控制。</li>
+<li><strong>奇异性</strong>：考虑一个完整驱动的无人机，虽然旋翼能够提供机体坐标系下的完整驱动力和力矩，但是可能存在一种情况：无人机在某个姿态下所提供的最大升力无法克服重力，使得无人机无法到达所有的姿态空间。因此，如何优化旋翼布局，避免这种奇异的出现或是最大化可到达的姿态空间是一个需要考虑的问题。此外，对于多组倾斜旋翼构成的无人机而言，旋翼的产生的气流有比较大的交叉和重叠，效率是比较低的，如何在保证驱动自由度的情况下，如何通过旋翼布局最大化驱动效率也是一个问题。</li>
+<li><strong>抗扰动控制</strong>：文中的控制器并未对扰动进行补偿，当系统中存在有界扰动时，会有较大的跟踪静差。可以设计自适应率，或者在控制器中加入积分环节进行补偿。</li>
+<li><strong>倾转旋翼的动力学</strong>对于带有倾转旋翼的无人机，应其动力学该是一个多体动力学模型，当简化成单一刚体进行建模和控制，会导致很多未建模的不确定性，特别是旋翼的质量惯量、空气动力学不可忽略，倾转电机的响应速度有限的情况下，简化的建模容易导致调参困难，运动性能无法调节地较为激进，甚至控制失效等问题。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/11/03/y2022m11/%E5%A7%BF%E6%80%81%E6%8E%A7%E5%88%B6/" rel="next" title="姿态控制">
+                <i class="fa fa-chevron-left"></i> 姿态控制
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/icon.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <br>
+            <div style="width:120px;text-align:left;margin-left: 50px;margin-right: 50px;">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/wuyangning" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://space.bilibili.com/347683789" target="_blank" title="BiliBili">
+                      
+                        <i class="fa fa-fw fa-globe"></i>BiliBili</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.youtube.com/channel/UCc2FKnVd4zd1lU_P9QGXRmA" target="_blank" title="YouTube">
+                      
+                        <i class="fa fa-fw fa-youtube"></i>YouTube</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.thingiverse.com/yang_gt/designs" target="_blank" title="Thingiverse">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Thingiverse</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">1 不同构型旋翼无人机的控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">1.1 单一刚体的动力学和控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">1.2 电机混控</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">2 欠驱动无人机</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.1 平面四旋翼(正X型-Qaudcopter)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.2 三旋翼(Tri-copter)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.3 倾转双旋翼(Bi-copter)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.4 矢量共轴双旋翼</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">3 全驱动无人机</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">3.1 全驱动倾转三旋翼</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">3.2 全驱动六旋翼</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">4 补充</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">WuYangNing</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

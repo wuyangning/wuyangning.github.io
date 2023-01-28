@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/y.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/y.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="robotics" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="摘要：讨论不同姿态表示方法下的姿态运动学和动力学控制。包含的姿态控制方法有：基于欧拉角的控制、基于四元数的控制、基于李群李代数的控制(几何控制)。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="姿态控制">
+<meta property="og:url" content="http://example.com/2022/11/03/y2022m11/%E5%A7%BF%E6%80%81%E6%8E%A7%E5%88%B6/index.html">
+<meta property="og:site_name" content="WuYangNing">
+<meta property="og:description" content="摘要：讨论不同姿态表示方法下的姿态运动学和动力学控制。包含的姿态控制方法有：基于欧拉角的控制、基于四元数的控制、基于李群李代数的控制(几何控制)。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-11-03T07:13:39.040Z">
+<meta property="article:modified_time" content="2023-01-27T11:21:22.028Z">
+<meta property="article:author" content="WuYangNing">
+<meta name="twitter:card" content="summary">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":true,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+
+
+
+
+  <title>姿态控制 | WuYangNing</title>
+  
+
+
+
+
+
+
+
+
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">WuYangNing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-all-posts">
+          <a href="/default-index/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            All posts
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/03/y2022m11/%E5%A7%BF%E6%80%81%E6%8E%A7%E5%88%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/icon.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="WuYangNing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">姿态控制</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2022-11-03T15:13:39+08:00">
+                2022-11-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><strong>摘要：讨论不同姿态表示方法下的姿态运动学和动力学控制。包含的姿态控制方法有：基于欧拉角的控制、基于四元数的控制、基于李群李代数的控制(几何控制)。</strong><br><span id="more"></span></p>
+<h1><span id="1-姿态运动学控制">1 姿态运动学控制</span></h1><p>&emsp;这里的运动学考虑姿态运动的一阶模型，通过设定期望的角速度让刚体到达期望的姿态。通过对简单的运动学控制效果进行比较，能够直观地展示不同姿态表示法的特点。</p>
+<h2><span id="11-基于欧拉角的运动学控制">1.1 基于欧拉角的运动学控制</span></h2><p>&emsp;使用绕机体坐标系旋转的z-y-x欧拉角$\boldsymbol{\Phi}=[\phi,\theta,\psi]^{\mathrm{T}}$来表示姿态，系统的输入为刚体坐标系下的角速度$\boldsymbol{\omega}_b$，采用欧拉角表示的姿态运动学模型可以写作：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&\dot{\boldsymbol{\Phi}}=T(\boldsymbol{\Phi})\boldsymbol{\boldsymbol{\omega}}_b\\
+\end{align}\tag{1.1}</script><p>其中</p>
+<script type="math/tex; mode=display">
+T(\boldsymbol{\Phi})=\begin{bmatrix}
+1 & \mathrm{sin}\phi \mathrm{tan}\theta&\mathrm{cos}\phi\mathrm{tan}\theta\\
+0 & \mathrm{cos}\phi & -\mathrm{sin}\phi\\
+0 & \mathrm{sin}\phi \mathrm{sec}\theta  & \mathrm{cos}\phi \mathrm{sec}\theta
+\end{bmatrix} \tag{1.2}</script><p>当$\theta\neq\pm \pi/2$时，$T(\boldsymbol{\Phi})$的逆为：</p>
+<script type="math/tex; mode=display">T^{-1}(\boldsymbol{\Phi})=\begin{bmatrix}
+1 & 0&-\mathrm{sin}\theta\\
+0 & \mathrm{cos}\phi & \mathrm{sin}\phi\mathrm{cos}\theta\\
+0 & -\mathrm{sin}\phi & \mathrm{cos}\phi \mathrm{cos}\theta
+\end{bmatrix}\tag{1.3}</script><p>&emsp;由于欧拉角无法直接表示$SO(3)$空间中的旋转误差，因此采用线性误差来表示旋转误差，定义期望的姿态为$\boldsymbol{\Phi}_d$，这里考虑姿态的定点控制，则$\dot{\boldsymbol{\Phi}}_d=0$。定义欧拉角的误差为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\Phi}_e=\boldsymbol{\Phi}-\boldsymbol{\Phi}_d \tag{1.4}</script><p>将公式(1.1)改写作关于欧拉角误差的运动学模型：</p>
+<script type="math/tex; mode=display">
+\dot{\boldsymbol{\Phi}}_e=\dot{\boldsymbol{\Phi}}-\dot{\boldsymbol{\Phi}}_d=T(\boldsymbol{\Phi})\boldsymbol{\boldsymbol{\omega}}_b \tag{1.5}</script><p>设定控制输入$\boldsymbol{\omega}_b$为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\omega}_b=-T^{-1}(\boldsymbol{\Phi})K\boldsymbol{\Phi}_e \tag{1.6}</script><p>其中$K&gt;0\in\mathbb{R}^{3\times3}$为控制增益，是正定的对角矩阵。特别地，如果设定三个旋转方向的增益都相同，$K$可以使用$k\in\mathbb{R}$代替。<br>&emsp;将(1.6)代入(1.1)中可以得到:</p>
+<script type="math/tex; mode=display">
+\dot{\boldsymbol{\Phi}}_e+K\boldsymbol{\Phi}_e=0 \tag{1.7}</script><p>解上述微分方程可知，当$t\rightarrow \infty$时，$\boldsymbol{\Phi}_e$以指数误差收敛到$0$，即刚体的姿态最后能收敛到期望姿态。</p>
+<p><strong>奇异点和线性误差导致的问题</strong><br>&emsp;由于欧拉角存在万向节死锁问题，且欧拉角误差范数在$SO(3)$并不是两个姿态之间的最短路径，因而基于欧拉角的控制会有以下两个问题。</p>
+<ol>
+<li>控制器设计基于$\theta\neq\pm \pi/2$的假设。$\theta=\pm \pi/2$是奇异位置，当姿态无限接近$\theta\neq\pm \pi/2$时，一个小的旋转变化就可能导致欧拉角数值出现明显的变化，容易导致数值计算的不稳定。</li>
+<li>欧拉角的线性误差在$SO(3)$空间中表示的不是最短路径，因此姿态的收敛路径在$SO(3)$空间也不是最短的，并且越接近奇异位置收敛路径与最短路径差的越多。</li>
+</ol>
+<h2><span id="12-基于四元数的运动学控制">1.2 基于四元数的运动学控制</span></h2><p>&emsp;定义刚体姿态的四元数为$\boldsymbol{q}=[s,\boldsymbol{v}]^{\mathrm{T}}$，期望姿态的四元数为$\boldsymbol{q}_d=[s_d,\boldsymbol{v}_d]^{\mathrm{T}}$。考虑姿态的定点控制，则$\dot{\boldsymbol{q}}_d=0$。$\mathbb{S}^3$空间中的旋转误差可以使用四元数乘法表示：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{q}_e=\bar{\boldsymbol{q}}_d\otimes\boldsymbol{q} \tag{1.8}</script><p>其中$\boldsymbol{q}_e=[s_e,\boldsymbol{v}_e]^{\mathrm{T}}$为旋转的四元数误差。这一误差的范数表示了当前姿态到期望姿态在$\mathbb{S}^3$或$SO(3)$空间中的最短路径。当$\boldsymbol{q}_e\rightarrow[1,0,0,0]^{\mathrm{T}}$时，表明目标姿态和期望姿态重合。<br>&emsp;对公式(8)求导：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{\boldsymbol{q}}_e=&\dot{\bar{\boldsymbol{q}}}_d\otimes\boldsymbol{q}+\bar{\boldsymbol{q}}_d\otimes\dot{\boldsymbol{q}}\\
+=&\frac{1}{2}\bar{\boldsymbol{q}}_d\otimes\boldsymbol{q}\otimes\begin{bmatrix}0\\\boldsymbol{\omega}_b\end{bmatrix}\\
+=&\frac{1}{2}\boldsymbol{q}_e\otimes\begin{bmatrix}0\\\boldsymbol{\omega}_b\end{bmatrix}
+\end{aligned} \tag{1.9}</script><p>将公式(1.8)展开可以得到：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&\dot{s}_e=-\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}\boldsymbol{\omega}_b \tag{1.10}\\
+&\dot{\boldsymbol{v}}_e=\frac{1}{2}(s_e\boldsymbol{\omega}_b+\boldsymbol{v}_e\times\boldsymbol{\omega}_b) \tag{1.11}\\ 
+\end{align}</script><p>四元数本身有一个单位范数的约束，因此让$\boldsymbol{v}_e$收敛到0的同时$s_e$也会收敛到1。容易想到将控制器$\boldsymbol{\omega}_b$设计为：$\boldsymbol{\omega}_b=-\frac{2}{s_e}K\boldsymbol{v}_e$，这样公式(11)就可以改写为$\dot{\boldsymbol{v}}_e+K\boldsymbol{v}_e=0$的形式。但是$s_e$的值可能为0的，因此这么设计是不可行的。<br>&emsp;考虑控制器为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\omega}_b=-2K\boldsymbol{v}_e\tag{1.12}</script><p>其中$K$为对角矩阵，则公式(1.10)和(1.11)可以改写为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&\dot{s}_e=\boldsymbol{v}_e^{\mathrm{T}}K\boldsymbol{v}_e \tag{1.13}\\
+&\dot{\boldsymbol{v}}_e=-s_eK\boldsymbol{v}_e\tag{1.14}
+\end{align}</script><p>其中$K&gt;0\in\mathbb{R}^{3\times3}$为控制增益，是正定的对角矩阵。公式(1.13)中存在一个$s_e$，如果$s_e$是负值，仅从公式看，公式(13)是不收敛的。不过因为$s_e$和$\boldsymbol{v}_e$是相互关联的变量，这种固定一个变量去分析另一个变量本身就是不可行的。因此，这里使用李亚普诺夫方法进行分析。定义李雅普诺夫函数为：</p>
+<script type="math/tex; mode=display">
+V=\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}\boldsymbol{v}_e+\frac{1}{2}(1-s_e)^2>0 \tag{1.15}</script><p>当$V\rightarrow 0$时，有$\boldsymbol{v}_e\rightarrow 0$和$s_e\rightarrow 1$，刚体收敛到期望姿态。因此如果$\dot{V}$是负定的，就可以证明控制器是收敛的。对公式(1.15)求导，并将(1.13)和(1.14)代入，可得：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{V}=&\boldsymbol{v}_e^{\mathrm{T}}\dot{\boldsymbol{v}}_e-(1-s_e)\dot{s}_e\\
+=&-s_e\boldsymbol{v}_e^{\mathrm{T}}K\boldsymbol{v}_e-(1-s_e)\boldsymbol{v}_e^{\mathrm{T}}K\boldsymbol{v}_e\\
+=&-\boldsymbol{v}_e^{\mathrm{T}}K\boldsymbol{v}_e \le 0\\
+\end{aligned}\tag{1.16}</script><p>由于$V$的下界是0，$\dot{V}\le0$，并且：当且仅当$\boldsymbol{v}_e=0$时$\dot{V}=0$，因此当$t \rightarrow \infty$时，$\boldsymbol{v}_e\rightarrow 0$。(这一结论具体可以参考拉塞尔不变性原理)</p>
+<p><strong>双倍覆盖导致的问题</strong><br>&emsp;根据四元数的定义可知，四元数是双倍覆盖的，即四元数$\boldsymbol{q}$和$-\boldsymbol{q}$表示的其实是同一个旋转。这在控制中会导致一些问题：</p>
+<ol>
+<li><p>如果从仿真环境或者传感器解算出的四元数在正负之间反复横跳，会使得(12)中的控制器计算出来的控制量也在正负之间切换，导致控制不能收敛。这一问题可以通过选取四元数的$s$值为正的那一组四元数作为采样数值来解决。</p>
+</li>
+<li><p>(1.12)中给出的控制器和(1.15)中给出的李雅普诺夫函数，证明了四元数误差$\boldsymbol{q}_e$是收敛到$[1,0,0,0]^{\mathrm{T}}$的。如果初始时刻为$s_e=-0.9$，四元数误差会以$s_e: -0.9\rightarrow 0\rightarrow 1$的方式收敛到期望位置。但实际上$s_e:-0.9\rightarrow-1$在旋转空间中才是最短的收敛路径，反映的现象就是姿态会反向绕一个大圈收敛到期望姿态。因此，对于$s_e&gt;0$，希望$s_e\rightarrow 1$，而对于$s_e&lt;0$，希望$s_e\rightarrow -1$，这样刚体的姿态会以最短的那条路径收敛到期望姿态。可以定义如下李雅普诺夫函数</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+V_{+}=&\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}\boldsymbol{v}_e+\frac{1}{2}(1-s_e)^2,~when:s_e>0\\
+V_{-}=&\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}\boldsymbol{v}_e+\frac{1}{2}(1+s_e)^2,~when:s_e<0 
+\end{aligned}\tag{1.17}</script><p> 控制器可以改进为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\omega}_b=-2\mathrm{sgn}(s_e)K\boldsymbol{v}_e\tag{1.18}</script><p>其中$\mathrm{sgn}(.)$为符号函数。可以证明(1.18)中的控制器对于$V_+$和$V_-$都有：</p>
+<script type="math/tex; mode=display">
+\dot{V}_+=\dot{V}_-=-\boldsymbol{v}_e^{\mathrm{T}}K\boldsymbol{v}_e \le 0 \tag{1.19}</script></li>
+</ol>
+<h2><span id="13-基于so3的运动学控制">1.3 基于$SO(3)$的运动学控制</span></h2><p>&emsp;记当前姿态和期望姿态的旋转姿态分别为$R$和$R_d$。考虑定点控制，则$\dot{R}_d=0$。$SO(3)$空间中的旋转误差可以表示为：</p>
+<script type="math/tex; mode=display">
+R_e=R_d^{\mathrm{T}}R \tag{1.20}</script><p>同时：</p>
+<script type="math/tex; mode=display">
+\dot{R}_e=R_e\mathrm{sk}(\boldsymbol{\omega}_b) \tag{1.21}</script><p>&emsp;当刚体姿态逼近期望姿态时，$R_e\rightarrow I$，因此可以考虑如下李雅普诺夫函数：</p>
+<script type="math/tex; mode=display">
+V=\mathrm{tr}(I-R_e)>0 \tag{1.22}</script><p>对公式(1.22)求导：</p>
+<script type="math/tex; mode=display">
+\dot{V}=-\mathrm{tr}[R_e\mathrm{sk}(\boldsymbol{\omega}_b)] \tag{1.23}</script><p>结合$\mathfrak{so}(3)$的定义，$SO(3)$的切空间是一个反对称矩阵或反对称矩阵对应的$\mathbb{R}^3$向量。记$\boldsymbol{\phi}_e=(R_e-R_e^{\mathrm{T}})^{\vee}$，容易想到将$\boldsymbol{\omega}_b$设计为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\omega}_b=-K\boldsymbol{\phi}_e\tag{1.24}</script><p>则：</p>
+<script type="math/tex; mode=display">
+\mathrm{sk}(\boldsymbol{\omega}_b)=-K(R_e-R_e^{\mathrm{T}}) \tag{1.25}</script><p>其中$K$为对角矩阵。将(1.25)代入(1.23)中，得到：</p>
+<script type="math/tex; mode=display">
+\dot{V}=-\mathrm{tr}[K(I-R_eR_e)] \le -k_{\mathrm{min}}\mathrm{tr}(I-R_eR_e)\le 0 \tag{1.26}</script><p>其中$k_{\mathrm{min}}$为$K$矩阵中最小的元素。对于$\dot{V}$，当且仅当$R_e=I$时$\dot{V}=0$，根据拉塞尔不变性原理，当$t\rightarrow 0$时，$R_e\rightarrow I$。</p>
+<h1><span id="2-姿态动力学控制">2 姿态动力学控制</span></h1><p>&emsp;考虑完整的姿态轨迹跟踪问题，对于不同的姿态表示方法，分别使用反步控制来设计姿态控制器。</p>
+<h2><span id="21-基于欧拉角的控制">2.1 基于欧拉角的控制</span></h2><p>&emsp;记当前姿态和期望姿态的欧拉角分别为$\boldsymbol{\Phi}=[\phi,\theta,\psi]^{\mathrm{T}}$和$\boldsymbol{\Phi}=[\phi_d,\theta_d,\psi_d]^{\mathrm{T}}$，欧拉角的线性误差为$\boldsymbol{\Phi}_e=\boldsymbol{\Phi}-\boldsymbol{\Phi}_d $。欧拉角表示的旋转误差的动力学可以写为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&\dot{\boldsymbol{\Phi}}_e=T(\boldsymbol{\Phi})\boldsymbol{\omega}_b-\dot{\boldsymbol{\Phi}}_d \tag{2.1}\\
+&\dot{\boldsymbol{\omega}}_b=J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau})\tag{2.2}
+\end{align}</script><p>其中$J&gt;0$为刚体的惯性矩阵，$\boldsymbol{\tau}$为刚体在自身坐标系下的受力，即待设计的控制量。</p>
+<p>&emsp;选取李雅普诺夫函数为：</p>
+<script type="math/tex; mode=display">
+V_1=\frac{1}{2}\boldsymbol{\Phi}_e^{\mathrm{T}}\boldsymbol{\Phi}_e \tag{2.3}</script><p>则：</p>
+<script type="math/tex; mode=display">
+\dot{V}_1=\boldsymbol{\Phi}_e^{\mathrm{T}}\dot{\boldsymbol{\Phi}}_e=\boldsymbol{\Phi}_e^{\mathrm{T}}[T(\boldsymbol{\Phi})\boldsymbol{\omega}_b-\dot{\boldsymbol{\Phi}}_d] \tag{2.4}</script><p>当$T(\boldsymbol{\Phi})\boldsymbol{\omega}_b=-(K_1\boldsymbol{\Phi}_e-\dot{\boldsymbol{\Phi}}_d)$时，有$\dot{V}_1=-\boldsymbol{\Phi}_e^{\mathrm{T}}K_1\boldsymbol{\Phi}_e\le 0$，因此，可以定义虚拟控制量：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\Phi}_z=T(\boldsymbol{\Phi})\boldsymbol{\omega}_b+(K_1\boldsymbol{\Phi}_e-\dot{\boldsymbol{\Phi}}_d) \tag{2.5}</script><p>则$\dot{V}_1$可以被改写为：</p>
+<script type="math/tex; mode=display">
+\dot{V}_1=-\boldsymbol{\Phi}_e^{\mathrm{T}}K_1\boldsymbol{\Phi}_e+\boldsymbol{\Phi}_e^{\mathrm{T}}\boldsymbol{\Phi}_z \tag{2.6}</script><p>对(2.5)求导可以得到$\boldsymbol{\Phi}_z$的导数：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{\boldsymbol{\Phi}}_z=&\dot{T}(\boldsymbol{\Phi})\boldsymbol{\omega}_b+T(\boldsymbol{\Phi})\dot{\boldsymbol{\omega}}_b+K_1\dot{\boldsymbol{\Phi}}_e-\ddot{\boldsymbol{\Phi}}_d\\
+=&T(\boldsymbol{\Phi})J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau})+\dot{T}(\boldsymbol{\Phi})\boldsymbol{\omega}_b\\
+&+K_1T(\boldsymbol{\Phi})\boldsymbol{\omega}_b-(K_1\dot{\boldsymbol{\Phi}}_d+\ddot{\boldsymbol{\Phi}}_d)
+\end{aligned}\tag{2.7}</script><p>&emsp;重新选取李雅普诺夫函数：</p>
+<script type="math/tex; mode=display">
+V_2=V_1+\frac{1}{2}\boldsymbol{\Phi}_z^{\mathrm{T}}\boldsymbol{\Phi}_z  \tag{2.8}</script><p>则：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{V}_2=&-\boldsymbol{\Phi}_e^{\mathrm{T}}K_1\boldsymbol{\Phi}_e+\boldsymbol{\Phi}_e^{\mathrm{T}}\boldsymbol{\Phi}_z\\
+&+\boldsymbol{\Phi}_z^{\mathrm{T}}[T(\boldsymbol{\Phi})J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau})+\dot{T}(\boldsymbol{\Phi})\boldsymbol{\omega}_b\\
+&~~~~~~~~~~~+K_1T(\boldsymbol{\Phi})\boldsymbol{\omega}_b-(K_1\dot{\boldsymbol{\Phi}}_d+\ddot{\boldsymbol{\Phi}}_d)]
+\end{aligned} \tag{2.9}</script><p>设计如下控制器：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\boldsymbol{\tau}=\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b-JT^{-1}(\boldsymbol{\Phi})[&K_2\boldsymbol{\Phi}_z+\dot{T}(\boldsymbol{\Phi})\boldsymbol{\omega}_b+K_1T(\boldsymbol{\Phi})\boldsymbol{\omega}_b\\
+&+\boldsymbol{\Phi}_e-(K_1\dot{\boldsymbol{\Phi}}_d+\ddot{\boldsymbol{\Phi}}_d)] 
+\end{aligned}\tag{2.10}</script><p>其中$K_1,K_2$为正定对角矩阵。$\dot{T}(\boldsymbol{\Phi})$的展开如下：</p>
+<script type="math/tex; mode=display">
+\dot{T}(\boldsymbol{\Phi})=\left [\boldsymbol{0},AT(\boldsymbol{\Phi})\boldsymbol{\omega}_b, BT(\boldsymbol{\Phi})\boldsymbol{\omega}_b\right ]\tag{2.11}</script><p>其中：</p>
+<script type="math/tex; mode=display">
+A=\begin{bmatrix}
+\mathrm{cos}\phi\mathrm{tan}\theta&\mathrm{sin}\phi\mathrm{sec}^2\theta  &0 \\ 
+-\mathrm{sin}\phi&0  &0 \\ 
+\mathrm{cos}\phi\mathrm{sec}\theta&\mathrm{sin}\phi\mathrm{sec}\theta\mathrm{tan}\theta  &0 
+\end{bmatrix},
+B=\begin{bmatrix}
+-\mathrm{sin}\phi\mathrm{tan}\theta&\mathrm{cos}\phi\mathrm{sec}^2\theta  &0 \\ 
+-\mathrm{cos}\phi&0  &0 \\ 
+-\mathrm{sin}\phi\mathrm{sec}\theta&\mathrm{cos}\phi\mathrm{sec}\theta\mathrm{tan}\theta  &0 
+\end{bmatrix}</script><p>将(2.10)代入(2.9)可以得到：</p>
+<script type="math/tex; mode=display">
+\dot{V}_2\le-\boldsymbol{\Phi}_e^{\mathrm{T}}K_1\boldsymbol{\Phi}_e-\boldsymbol{\Phi}_z^{\mathrm{T}}K_2\boldsymbol{\Phi}_z \tag{2.12}</script><p>对于$\dot{V}_2$，当且仅当$\boldsymbol{\Phi}_e=0$和$\boldsymbol{\Phi}_z=0$时$\dot{V}_2=0$，根据拉塞尔不变性原理，当$t\rightarrow \infty$时，$\boldsymbol{\Phi}_e\rightarrow 0$和$\boldsymbol{\Phi}_z \rightarrow 0$。</p>
+<h2><span id="22-基于四元数的控制">2.2 基于四元数的控制</span></h2><p>&emsp;定义刚体姿态的四元数为$\boldsymbol{q}=[s,\boldsymbol{v}]^{\mathrm{T}}$，期望姿态的四元数为$\boldsymbol{q}_d=[s_d,\boldsymbol{v}_d]^{\mathrm{T}}$，四元数误差为$\boldsymbol{q}_e=\bar{\boldsymbol{q}}_d\otimes\boldsymbol{q}=[s_e,\boldsymbol{v}_e]^{\mathrm{T}}$。对$\boldsymbol{q}_d\boldsymbol{q}_e=\boldsymbol{q}$两边同时求导，可以得到：</p>
+<script type="math/tex; mode=display">
+\dot{\boldsymbol{q}}_e=\frac{1}{2}\boldsymbol{q}_e\otimes\begin{bmatrix}0\\\boldsymbol{\omega}_b\end{bmatrix}-\frac{1}{2}\begin{bmatrix}0\\\boldsymbol{\omega}_d\end{bmatrix}\otimes\boldsymbol{q}_e\tag{2.13}</script><p>其中$\boldsymbol{\omega}_d$为期望的角速度。将(2.13)展开，四元数表示的姿态动力学可以写作：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+&\dot{s}_e=-\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}(\boldsymbol{\omega}_b-\boldsymbol{\omega}_d) \tag{2.14}\\
+&\dot{\boldsymbol{v}}_e=\frac{1}{2}[s_e(\boldsymbol{\omega}_b-\boldsymbol{\omega}_d)+\boldsymbol{v}_e\times(\boldsymbol{\omega}_b+\boldsymbol{\omega}_d)] \tag{2.15}\\ 
+&\dot{\boldsymbol{\omega}}_b=J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau})\tag{2.16}
+\end{align}</script><p>&emsp;选取李雅普诺夫函数为：</p>
+<script type="math/tex; mode=display">
+V_1=\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}\boldsymbol{v}_e+\frac{1}{2}(1-s_e)^2\tag{2.17}</script><p>则(这里利用了向量混合积的性质)：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{V}_1=&\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}[s_e(\boldsymbol{\omega}_b-\boldsymbol{\omega}_d)+\boldsymbol{v}_e\times(\boldsymbol{\omega}_b+\boldsymbol{\omega}_d)]-(1-s_e)\dot{s}_e\\
+=&\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}[s_e(\boldsymbol{\omega}_b-\boldsymbol{\omega}_d)]+\frac{1}{2}(1-s_e)\boldsymbol{v}_e^{\mathrm{T}}(\boldsymbol{\omega}_b-\boldsymbol{\omega}_d)
+\end{aligned}\tag{2.18}</script><p>当$\boldsymbol{\omega}_b=-2K_1\boldsymbol{v}_e+\boldsymbol{\omega}_d$时，有$\dot{V}_1=-\boldsymbol{v}_e^{\mathrm{T}}K_1\boldsymbol{v}_e\le0$。因此，定义虚拟控制量为</p>
+<script type="math/tex; mode=display">
+\boldsymbol{v}_z=\boldsymbol{\omega}_b+2K_1\boldsymbol{v}_e-\boldsymbol{\omega}_d \tag{2.19}</script><p>则：</p>
+<script type="math/tex; mode=display">
+\dot{V}_1=-\boldsymbol{v}_e^{\mathrm{T}}K_1\boldsymbol{v}_e+\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}\boldsymbol{v}_z \tag{2.20}</script><p>对公式(2.19)求导，可以得到$\boldsymbol{v}_z$的导数：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{\boldsymbol{v}}_z=&\dot{\boldsymbol{\omega}}_b+2K_1\dot{\boldsymbol{v}}_e-\dot{\boldsymbol{\omega}}_d\\
+=&J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau})+2K_1\dot{\boldsymbol{v}}_e-\dot{\boldsymbol{\omega}}_d
+\end{aligned}\tag{2.21}</script><p>其中：$\dot{\boldsymbol{v}}_e$在公式(2.15)给出。</p>
+<p>&emsp;重新选择李雅普诺夫函数：</p>
+<script type="math/tex; mode=display">
+V_2=V_1+\frac{1}{2}\boldsymbol{v}_z^{\mathrm{T}}\boldsymbol{v}_z\tag{2.22}</script><p>则：</p>
+<script type="math/tex; mode=display">
+\dot{V}_2=-\boldsymbol{v}_e^{\mathrm{T}}K_1\boldsymbol{v}_e+\frac{1}{2}\boldsymbol{v}_e^{\mathrm{T}}\boldsymbol{v}_z+\boldsymbol{v}_z^{\mathrm{T}}[J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau})+2K_1\dot{\boldsymbol{v}}_e-\dot{\boldsymbol{\omega}}_d]\tag{2.23}</script><p>设计控制为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\tau}=\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+J[-K_2\boldsymbol{v}_z-2K_1\dot{\boldsymbol{v}}_e+\dot{\boldsymbol{\omega}}_d-\frac{1}{2}\boldsymbol{v}_e]\tag{2.24}</script><p>其中$K_2$为正定对角矩阵。将公式(2.24)代入(2.23)中可以得到：</p>
+<script type="math/tex; mode=display">
+\dot{V}_2=-\boldsymbol{v}_e^{\mathrm{T}}K_1\boldsymbol{v}_e-\boldsymbol{v}_z^{\mathrm{T}}K_2\boldsymbol{v}_z\le0 \tag{2.25}</script><p>根据拉塞尔不变性原理，当$t\rightarrow \infty$时，$\boldsymbol{v}_e\rightarrow 0$和$\boldsymbol{v}_z \rightarrow 0$。对于前面提到的四元数数双倍覆盖导致的收敛问题，可以使用$\mathrm{sign}(s_e)\boldsymbol{q}_e$来代替$\boldsymbol{q}_e$解决。</p>
+<h2><span id="23-基于so3的控制">2.3 基于$SO(3)$的控制</span></h2><p>&emsp;为了便于后续的控制器的推导，先给出两个结论。对于$\boldsymbol{\phi}_e=(R_e-R_e^{\mathrm{T}})^{\vee}$和任意的向量$\boldsymbol{z}$，满足以下关系：</p>
+<ol>
+<li>$\boldsymbol{\phi}_e^{\mathrm{T}}\boldsymbol{\phi}_e=\mathrm{tr}(I-R_eR_e)$</li>
+<li>$\boldsymbol{z}^{\mathrm{T}}\boldsymbol{\phi}_e=-\mathrm{tr}[R_e\mathrm{sk}(\boldsymbol{z})]$</li>
+</ol>
+<p>这两个结论都可以利用这一性质导出：对于任意的$\boldsymbol{x},\boldsymbol{y}\in\mathbb{R}^3$满足$\boldsymbol{x}^{\mathrm{T}}\boldsymbol{y}=-\frac{1}{2}\mathrm{tr}[\mathrm{sk}(\boldsymbol{x})\mathrm{sk}(\boldsymbol{y})]$。</p>
+<p>&emsp;记当前姿态和期望姿态的旋转矩阵分别为$R$和$R_d$，旋转误差为$R_e=R_d^{\mathrm{T}}R$。$SO(3)$空间中的旋转误差的动力学可以表示为：</p>
+<script type="math/tex; mode=display">
+\begin{align}
+& \dot{R}_e=R_e\mathrm{sk}(\boldsymbol{\omega}_b)-\mathrm{sk}(\boldsymbol{\omega}_d)R_e \tag{2.26}\\
+&\dot{\boldsymbol{\omega}}_b=J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau}) \tag{2.27}
+\end{align}</script><p>&emsp;选取李雅普诺夫函数：</p>
+<script type="math/tex; mode=display">
+V_1=\mathrm{tr}(I-R_e) \tag{2.28}</script><p>则：</p>
+<script type="math/tex; mode=display">
+\dot{V}_1=-\mathrm{tr}[R_e\mathrm{sk}(\boldsymbol{\omega}_b)-\mathrm{sk}(\boldsymbol{\omega}_d)R_e] \tag{2.29}</script><p>当$\mathrm{sk}(\boldsymbol{\omega}_b)=-K_1(R_e-R_e^{\mathrm{T}})+R_e^{\mathrm{T}}\mathrm{sk}(\boldsymbol{\omega}_d)R_e$时，有:$\dot{V}_1=-\mathrm{tr}[K_1(I-R_eR_e)] \le 0$。因此设计虚拟控制量$\mathrm{sk}(\boldsymbol{z})=\mathrm{sk}(\boldsymbol{\omega}_b)+K_1(R_e-R_e^{\mathrm{T}})-R_e^{\mathrm{T}}\mathrm{sk}(\boldsymbol{\omega}_d)R_e$，即：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{z}=\boldsymbol{\omega}_b+K_1\boldsymbol{\phi}_e-R_e^{\mathrm{T}}\boldsymbol{\omega}_d \tag{2.30}</script><p>其中$K_1$为正定对角矩阵，则$\dot{V}_1$可以写作：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{V}_1=&-\mathrm{tr}[R_e\mathrm{sk}(\boldsymbol{\omega}_b)-\mathrm{sk}(\boldsymbol{\omega}_d)R_e]+\mathrm{tr}[R_e\mathrm{sk}(\boldsymbol{z})]-\mathrm{tr}[R_e\mathrm{sk}(\boldsymbol{z})]\\
+=&-\mathrm{tr}[K_1(I-R_eR_e)]-\mathrm{tr}[R_e\mathrm{sk}(\boldsymbol{z})]\\
+\le&-k_{m1}\boldsymbol{\phi}_e^{\mathrm{T}}\boldsymbol{\phi}_e+\boldsymbol{z}^{\mathrm{T}}\boldsymbol{\phi}_e
+\end{aligned}\tag{2.31}</script><p>其中$k_{m1}$为$K$矩阵中的最小元素。对公式(2.30)求导可以得到$\boldsymbol{z}$的导数：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{\boldsymbol{z}}=&\dot{\boldsymbol{\omega}}_b+K_1\dot{\boldsymbol{\phi}_e}-\boldsymbol{\Omega}_e\\
+=&J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau}+\boldsymbol{d})+K_1\dot{\boldsymbol{\phi}_e}-\boldsymbol{\Omega}_e
+\end{aligned}\tag{2.32}</script><p>其中：$\dot{\boldsymbol{\phi}_e}=(\dot{R}_e-\dot{R}_e^{\mathrm{T}})^{\vee}$，$\boldsymbol{\Omega}_e=\dot{R}_e^{\mathrm{T}}\boldsymbol{\omega}_d+R_e^{\mathrm{T}}\dot{\boldsymbol{\omega}}_d$。</p>
+<p>&emsp;重新选择李雅普诺夫函数为：</p>
+<script type="math/tex; mode=display">
+V_2=V_1+\frac{1}{2}\boldsymbol{z}^{\mathrm{T}}\boldsymbol{z}\tag{2.33}</script><p>则：</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\dot{V}_2\le&-k_{m1}\boldsymbol{\phi}_e^{\mathrm{T}}\boldsymbol{\phi}_e+\boldsymbol{z}^{\mathrm{T}}\boldsymbol{\phi}_e+\boldsymbol{z}^{\mathrm{T}}\dot{\boldsymbol{z}}\\
+=&-k_{m1}\boldsymbol{\phi}_e^{\mathrm{T}}\boldsymbol{\phi}_e+\boldsymbol{z}^{\mathrm{T}}\boldsymbol{\phi}_e\\
+&+\boldsymbol{z}^{\mathrm{T}}[J^{-1}(-\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+\boldsymbol{\tau})+K_1\dot{\boldsymbol{\phi}_e}-\boldsymbol{\Omega}_e]
+\end{aligned}\tag{2.34}</script><p>设计控制器为：</p>
+<script type="math/tex; mode=display">
+\boldsymbol{\tau}=\boldsymbol{\omega}_b\times J\boldsymbol{\omega}_b+J(-K_2\boldsymbol{z}-\boldsymbol{\phi}_e-K_1\dot{\boldsymbol{\phi}}_e+\boldsymbol{\Omega}_e)\tag{2.35}</script><p>其中，$K_2$为正定对角矩阵，记$K_2$中的最小元素为$k_{m2}$，则：</p>
+<script type="math/tex; mode=display">
+\dot{V}_2\le-k_{m1}\boldsymbol{\phi}_e^{\mathrm{T}}\boldsymbol{\phi}_e-k_{m2}\boldsymbol{z}^{\mathrm{T}}\boldsymbol{z}\le 0\tag{2.36}</script><p>对于$\dot{V}_2$，当且仅当$\boldsymbol{\phi}_e=0$和$\boldsymbol{z}=0$时$\dot{V}_2=0$，根据拉塞尔不变性原理，当$t\rightarrow \infty$时，$\boldsymbol{\phi}_e\rightarrow 0$和$\boldsymbol{z}\rightarrow 0$，对应的$R_e\rightarrow R_d$。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2022/10/29/y2022m11/%E5%A7%BF%E6%80%81%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95/" rel="next" title="姿态表示方法">
+                <i class="fa fa-chevron-left"></i> 姿态表示方法
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/01/27/y2023m01/%E4%B8%8D%E5%90%8C%E6%9E%84%E5%9E%8B%E6%97%8B%E7%BF%BC%E6%97%A0%E4%BA%BA%E6%9C%BA%E7%9A%84%E6%8E%A7%E5%88%B6/" rel="prev" title="不同构型旋翼无人机的控制">
+                不同构型旋翼无人机的控制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/icon.jpg"
+                alt="" />
+            
+              <p class="site-author-name" itemprop="name"></p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives">
+              
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+            <br>
+            <div style="width:120px;text-align:left;margin-left: 50px;margin-right: 50px;">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/wuyangning" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://space.bilibili.com/347683789" target="_blank" title="BiliBili">
+                      
+                        <i class="fa fa-fw fa-globe"></i>BiliBili</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.youtube.com/channel/UCc2FKnVd4zd1lU_P9QGXRmA" target="_blank" title="YouTube">
+                      
+                        <i class="fa fa-fw fa-youtube"></i>YouTube</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.thingiverse.com/yang_gt/designs" target="_blank" title="Thingiverse">
+                      
+                        <i class="fa fa-fw fa-globe"></i>Thingiverse</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">1 姿态运动学控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">1.1 基于欧拉角的运动学控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">1.2 基于四元数的运动学控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">1.3 基于$SO(3)$的运动学控制</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link"><span class="nav-text">2 姿态动力学控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.1 基于欧拉角的控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.2 基于四元数的控制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-text">2.3 基于$SO(3)$的控制</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+        <div class="back-to-top">
+          <i class="fa fa-arrow-up"></i>
+          
+        </div>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">WuYangNing</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>
